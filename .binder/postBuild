@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -eux
 
-# prefling node stuff
-jlpm --ignore-optional
+# preflight node stuff
+jlpm --ignore-optional --prefer-offline
 jlpm lint
 jlpm build
 
