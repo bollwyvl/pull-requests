@@ -22,4 +22,5 @@ dependencies:
   # TODO: use the real stuff
   - pip:
     - jupyterlab-git >=0.30.0b2
+    # doesn't actually start in lab
     - nbdime >=3.0.0b1

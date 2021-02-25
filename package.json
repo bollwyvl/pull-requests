@@ -27,7 +27,7 @@
   },
   "scripts": {
     "build": "jlpm build:webpack && jlpm build:ts && jlpm build:labext",
-    "build:webpack": "webpack",
+    "build:webpack": "webpack -c webpack.monaco.config.js",
     "build:ts": "tsc",
     "build:labext": "jupyter labextension build .",
     "clean": "rimraf lib",
@@ -81,6 +81,7 @@
     "lodash": "^4.17.11",
     "prettier": "^2.1.1",
     "rimraf": "~3.0.0",
+    "string-replace-loader": "^3.0.1",
     "ts-jest": "^26.5.2",
     "typescript": "~4.1.3",
     "webpack": "^5.3.1",
@@ -92,6 +93,7 @@
   "jupyterlab": {
     "extension": true,
     "outputDir": "jupyterlab_pullrequests/labextension",
+    "webpackConfig": "./webpack.extension.config.js",
     "discovery": {
       "server": {
         "managers": [

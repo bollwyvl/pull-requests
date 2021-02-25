@@ -1,7 +1,9 @@
 import { IThemeManager } from '@jupyterlab/apputils';
 import * as d3 from 'd3-color';
 import { isNull } from 'lodash';
+
 import * as monaco from 'monaco-editor';
+
 import * as React from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import {
@@ -22,16 +24,16 @@ import * as monacoJSON from 'file-loader!../../../lib/JUPYTERLAB_FILE_LOADER_jup
 import * as monacoTS from 'file-loader!../../../lib/JUPYTERLAB_FILE_LOADER_jupyterlab-pullrequests-ts.worker.bundle.js';
 
 let URLS: { [key: string]: string } = {
-  css: monacoCSS,
-  html: monacoHTML,
-  javascript: monacoTS,
-  json: monacoJSON,
-  typescript: monacoTS
+  css: (monacoCSS as any).default,
+  html: (monacoHTML as any).default,
+  javascript: (monacoTS as any).default,
+  json: (monacoJSON as any).default,
+  typescript: (monacoTS as any).default
 };
 
 (self as any).MonacoEnvironment = {
   getWorkerUrl: function (moduleId: string, label: string): string {
-    let url = URLS[label] || monacoEditor;
+    let url = URLS[label] || (monacoEditor as any).default;
     return url;
   }
 };
