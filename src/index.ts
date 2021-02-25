@@ -30,8 +30,8 @@ function activate(
 ): void {
   const prPanel = new PullRequestPanel(app, themeManager, renderMime);
   restorer.add(prPanel, NAMESPACE);
-  app.shell.add(prPanel, 'left', { rank: 200 }); // rank chosen from similar open source extensions
-  return;
+  // rank chosen from similar open source extensions
+  app.shell.add(prPanel, 'left', { rank: 200 });
 }
 
 export default pullRequestPlugin;

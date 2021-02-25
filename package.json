@@ -31,7 +31,7 @@
     "build:ts": "tsc",
     "build:labext": "jupyter labextension build .",
     "clean": "rimraf lib",
-    "watch": "jlpm build -w",
+    "watch": "jlpm build:ts -w",
     "test": "jest",
     "lint": "jlpm && jlpm prettier && jlpm eslint",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
