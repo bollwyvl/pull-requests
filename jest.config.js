@@ -5,6 +5,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
+  globals: { 'ts-jest': { tsconfig: 'tsconfig.json' } },
   moduleNameMapper: {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     'monaco-editor': '<rootDir>/node_modules/react-monaco-editor'

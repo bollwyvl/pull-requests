@@ -115,7 +115,6 @@ export class PullRequestBrowserItem extends React.Component<
         <header>
           <h2>{this.props.header}</h2>
           <BeatLoader
-            sizeUnit={'px'}
             size={5}
             color={'var(--jp-ui-font-color1)'}
             loading={this.state.isLoading}

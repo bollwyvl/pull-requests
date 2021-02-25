@@ -247,9 +247,11 @@ export class PullRequestPlainDiffCommentThreadModel {
       getDomNode: () => overlayDom,
       getPosition: (): any => null
     };
-    this.plainDiff.state.diffEditor
-      .getModifiedEditor()
-      .addOverlayWidget(overlayWidget);
+    if (this.plainDiff.state.diffEditor) {
+      this.plainDiff.state.diffEditor
+        .getModifiedEditor()
+        .addOverlayWidget(overlayWidget);
+    }
 
     ReactDOM.render(
       <PullRequestCommentThread
@@ -280,6 +282,9 @@ export class PullRequestPlainDiffCommentThreadModel {
     zoneNode.id = this.thread.id;
     let marginZoneNode = document.createElement('div');
 
+    if (this.plainDiff.state.diffEditor == null) {
+      return;
+    }
     this.plainDiff.state.diffEditor
       .getModifiedEditor()
       .changeViewZones(changeAccessor => {
@@ -300,13 +305,15 @@ export class PullRequestPlainDiffCommentThreadModel {
 
   removeFromEditor(): void {
     const tempViewZoneId = this.viewZoneId;
-    this.plainDiff.state.diffEditor
-      .getModifiedEditor()
-      .changeViewZones(function (changeAccessor) {
-        if (tempViewZoneId != null) {
-          changeAccessor.removeZone(tempViewZoneId);
-        }
-      });
+    if (this.plainDiff.state.diffEditor != null) {
+      this.plainDiff.state.diffEditor
+        .getModifiedEditor()
+        .changeViewZones(function (changeAccessor) {
+          if (tempViewZoneId != null) {
+            changeAccessor.removeZone(tempViewZoneId);
+          }
+        });
+    }
     this.viewZoneId = null;
   }
 

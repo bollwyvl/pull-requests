@@ -18,6 +18,7 @@ dependencies:
   # test
   - asynctest
   - pytest
+  - pytest-cov
   # TODO: use the real stuff
   - pip:
     - jupyterlab-git >=0.30.0b2

@@ -45,8 +45,8 @@ export class PullRequestCommentThread extends React.Component<
     }
   }
 
-  handleInputChange = (event: React.FormEvent<HTMLInputElement>): void => {
-    this.setState({ inputText: (event.target as HTMLInputElement).value });
+  handleInputChange = (event: React.FormEvent<HTMLTextAreaElement>): void => {
+    this.setState({ inputText: (event.target as HTMLTextAreaElement).value });
   };
 
   onResize = (): void => {

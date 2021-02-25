@@ -2,7 +2,6 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "composite": true,
     "declaration": true,
     "esModuleInterop": true,
     "incremental": true,
@@ -15,12 +14,11 @@
     "outDir": "./lib/",
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
-    "rootDir": "./src/",
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es2017",
-    "types": []
+    "types": ["jest", "node"]
   },
   "include": ["./src/**/*", "./tests/**/*"]
 }
