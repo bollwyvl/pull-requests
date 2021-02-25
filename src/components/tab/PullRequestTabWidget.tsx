@@ -7,6 +7,8 @@ import { PullRequestFileTab } from './PullRequestFileTab';
 import { PullRequestDescriptionTab } from './PullRequestDescriptionTab';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 
+import { prIcon } from '../../icons';
+
 // Assumes valid json
 export class PullRequestTabWidget extends Widget {
   private _file: PullRequestFileModel;
@@ -26,6 +28,7 @@ export class PullRequestTabWidget extends Widget {
     if (model instanceof PullRequestFileModel) {
       this.id = model.id; // IDs in format 123456-README.md
       this.title.label = model.name;
+      this.title.icon = prIcon;
       this._file = model;
       ReactDOM.render(
         <PullRequestFileTab
@@ -38,6 +41,7 @@ export class PullRequestTabWidget extends Widget {
     } else {
       this.id = model.id; // IDs in format 123456-README.md
       this.title.label = model.title;
+      this.title.icon = prIcon;
       this._pr = model;
       ReactDOM.render(
         <PullRequestDescriptionTab
