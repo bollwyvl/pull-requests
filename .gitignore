@@ -106,8 +106,6 @@ node_modules/
 
 package-lock.json
 
-yarn.lock
-
 .pytest_cache/
 .pyc
 
