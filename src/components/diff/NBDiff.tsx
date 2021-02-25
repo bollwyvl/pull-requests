@@ -2,7 +2,6 @@ import * as nbformat from '@jupyterlab/nbformat';
 import { RenderMimeProvider } from '@jupyterlab/git/lib/components/diff/Diff';
 import { CellDiff } from '@jupyterlab/git/lib/components/diff/NbDiff';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { isNull, isUndefined } from 'lodash';
 import { IDiffEntry } from 'nbdime/lib/diff/diffentries';
 import { CellDiffModel, NotebookDiffModel } from 'nbdime/lib/diff/model';
 import * as React from 'react';
@@ -36,19 +35,16 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
   }
 
   render(): JSX.Element | null {
-    if (!isUndefined(this.state.error)) {
+    if (this.state.error == null) {
       return (
-        <h2 className="jp-PullRequestTabError">
+        <blockquote className="jp-PullRequestTabError">
           <span style={{ color: 'var(--jp-ui-font-color1)' }}>
             Error Loading File:
           </span>{' '}
           {this.state.error}
-        </h2>
+        </blockquote>
       );
-    } else if (
-      !isUndefined(this.state.nbdModel) &&
-      !isUndefined(this.state.prChunks)
-    ) {
+    } else if (this.state.nbdModel != null && this.state.prChunks != null) {
       const cellComponents = (this.state.prChunks || []).map(
         (prChunk, index) => (
           <div className="jp-PullRequestNBDiff" key={index}>
@@ -70,7 +66,7 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
                 )}
               </div>
             </div>
-            {!isUndefined(prChunk.comments) &&
+            {prChunk.comments != null &&
               prChunk.comments.map((comment, i) => (
                 <PullRequestCommentThread
                   key={i}
@@ -211,7 +207,7 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
     for (let chunk of originalChunks) {
       for (let cell of chunk) {
         // Add line numbers if it exists in remote
-        if (!isNull(cell.source.remote)) {
+        if (cell.source.remote != null) {
           let prChunk = new PullRequestChunkModel(chunk, this.props.file);
           let headNbdimeSource = cell.source.remote;
           let headContentSource: string = '';

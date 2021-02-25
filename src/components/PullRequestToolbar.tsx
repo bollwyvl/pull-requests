@@ -2,6 +2,8 @@ import { Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 import { PullRequestPanel } from './PullRequestPanel';
 
+import { refreshIcon } from '@jupyterlab/ui-components';
+
 export class PullRequestToolbar extends Toolbar {
   private _openRefreshButton: ToolbarButton;
 
@@ -11,7 +13,7 @@ export class PullRequestToolbar extends Toolbar {
 
     // Add toolbar header
     let widget: Widget = new Widget();
-    let title = document.createElement('h2');
+    let title = document.createElement('label');
     title.innerText = 'Pull Requests';
     widget.addClass('jp-PullRequestToolbarHeader');
     widget.node.appendChild(title);
@@ -22,7 +24,7 @@ export class PullRequestToolbar extends Toolbar {
       onClick: () => {
         panel.update();
       },
-      iconClass: 'jp-Refresh-icon jp-Icon jp-Icon-16',
+      icon: refreshIcon,
       tooltip: 'Refresh'
     });
     this._openRefreshButton.addClass('jp-PullRequestToolbarItem');

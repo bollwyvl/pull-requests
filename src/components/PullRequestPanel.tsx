@@ -6,6 +6,7 @@ import { PullRequestFileModel, PullRequestModel } from '../models';
 import { PullRequestBrowserWidget } from './browser/PullRequestBrowserWidget';
 import { PullRequestToolbar } from './PullRequestToolbar';
 import { PullRequestTabWidget } from './tab/PullRequestTabWidget';
+import { prIcon } from '../icons';
 
 export class PullRequestPanel extends Widget {
   private _app: JupyterFrontEnd;
@@ -24,7 +25,7 @@ export class PullRequestPanel extends Widget {
     this.addClass('jp-PullRequestPanel');
     this.layout = new PanelLayout();
 
-    this.title.iconClass = 'jp-PullRequest-icon jp-SideBar-tabIcon';
+    this.title.icon = prIcon;
     this.title.caption = 'Pull Requests';
     this.id = 'pullrequests';
 

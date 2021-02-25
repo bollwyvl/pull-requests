@@ -5,7 +5,6 @@ import * as ReactDOM from 'react-dom';
 import { PullRequestFileModel, PullRequestModel } from '../../models';
 import { PullRequestFileTab } from './PullRequestFileTab';
 import { PullRequestDescriptionTab } from './PullRequestDescriptionTab';
-import { isUndefined } from 'lodash';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 
 // Assumes valid json
@@ -52,7 +51,7 @@ export class PullRequestTabWidget extends Widget {
 
   onUpdateRequest(): void {
     ReactDOM.unmountComponentAtNode(this.node);
-    if (!isUndefined(this._file)) {
+    if (this._file != null) {
       ReactDOM.render(
         <PullRequestFileTab
           file={this._file}
@@ -61,7 +60,7 @@ export class PullRequestTabWidget extends Widget {
         />,
         this.node
       );
-    } else if (!isUndefined(this._pr)) {
+    } else if (this._pr != null) {
       ReactDOM.render(
         <PullRequestDescriptionTab
           pr={this._pr}

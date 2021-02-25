@@ -1,8 +1,8 @@
 import { IThemeManager, Spinner } from '@jupyterlab/apputils';
-import { isNull } from 'lodash';
 import * as React from 'react';
 import { RefObject } from 'react';
 import { PullRequestModel } from '../../models';
+import { launcherIcon } from '@jupyterlab/ui-components';
 
 export interface IPullRequestDescriptionTabState {
   pr: PullRequestModel;
@@ -35,24 +35,29 @@ export class PullRequestDescriptionTab extends React.Component<
     return (
       <div className="jp-PullRequestTab">
         {!this.state.isLoading ? (
-          isNull(this.state.error) && !isNull(this.state.pr) ? (
+          this.state.error == null && this.state.pr != null ? (
             <div className="jp-PullRequestDescriptionTab">
-              <h1>{this.state.pr.title}</h1>
-              <h2>{this.state.pr.body}</h2>
-              <button
-                className="jp-Button-flat jp-mod-styled jp-mod-accept"
-                onClick={() => window.open(this.state.pr.link, '_blank')}
-              >
-                View Details
-              </button>
+              <header>
+                <h1>
+                  <span>{this.state.pr.title}</span>
+                </h1>
+                <button
+                  className="jp-Button-flat jp-mod-styled jp-mod-accept"
+                  onClick={() => window.open(this.state.pr.link, '_blank')}
+                >
+                  <launcherIcon.react tag="span" elementSize="large" />
+                  <label>View Details</label>
+                </button>
+              </header>
+              <p>{this.state.pr.body}</p>
             </div>
           ) : (
-            <h2 className="jp-PullRequestTabError">
+            <blockquote className="jp-PullRequestTabError">
               <span style={{ color: 'var(--jp-ui-font-color1)' }}>
                 Error Loading File:
               </span>{' '}
               {this.state.error}
-            </h2>
+            </blockquote>
           )
         ) : (
           <div className="jp-PullRequestTabLoadingContainer">

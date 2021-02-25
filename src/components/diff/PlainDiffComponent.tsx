@@ -1,6 +1,5 @@
 import { IThemeManager } from '@jupyterlab/apputils';
 import * as d3 from 'd3-color';
-import { isNull } from 'lodash';
 
 import * as monaco from 'monaco-editor';
 
@@ -207,7 +206,7 @@ export class PlainDiffComponent extends React.Component<
     }
     // Show add comment decoration on mouse move
     this.state.diffEditor.getModifiedEditor().onMouseMove(e => {
-      if (!isNull(e.target['position'])) {
+      if (e.target['position'] != null) {
         this.updateCommentDecoration(e.target['position']['lineNumber']);
       } else if (this.state.decorations.length > 0 && e.target['type'] === 12) {
         this.removeCommentDecoration();
@@ -228,7 +227,7 @@ export class PlainDiffComponent extends React.Component<
         let lineNumber = parseInt(e.target.element.parentElement.innerText, 10);
         for (let comment of this.state.comments) {
           if (
-            isNull(comment.thread.comment) &&
+            comment.thread.comment == null &&
             comment.thread.lineNumber === lineNumber
           ) {
             return;

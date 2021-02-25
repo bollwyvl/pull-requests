@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PullRequestFileModel } from '../../models';
+import * as icons from '../../icons';
 
 export interface IPullRequestBrowserFileItemState {}
 
@@ -22,6 +23,9 @@ export class PullRequestBrowserFileItem extends React.Component<
         className="jp-PullRequestBrowserFileItem"
         title={this.props.file.name}
       >
+        <span className="jp-PullRequestBrowserFileItemChanged">
+          {this.props.file.status}
+        </span>
         <span
           className={
             'jp-Icon jp-Icon-16 jp-PullRequestBrowserFileItemIcon ' +
@@ -31,18 +35,13 @@ export class PullRequestBrowserFileItem extends React.Component<
         <span className="jp-PullRequestBrowserFileItemName">
           {this.extractFilename(this.props.file.name)}
         </span>
-        <span className="jp-PullRequestBrowserFileItemChanged">
-          {this.props.file.status}
-        </span>
         <div className="jp-PullRequestBrowserFileItemDiff">
-          <span className="jp-PullRequestBrowserFileItemDiffText">
-            {this.props.file.additions}
-          </span>
-          <span className="jp-Icon jp-Icon-13 jp-PullRequestBrowserFileItemDiffInserted"></span>
-          <span className="jp-PullRequestBrowserFileItemDiffText">
-            {this.props.file.deletions}
-          </span>
-          <span className="jp-Icon jp-Icon-13 jp-PullRequestBrowserFileItemDiffDeleted"></span>
+          <label>{this.props.file.additions}</label>
+          <icons.prInsertionIcon.react tag="span" elementSize="small" />
+        </div>
+        <div className="jp-PullRequestBrowserFileItemDiff">
+          <label>{this.props.file.deletions}</label>
+          <icons.prDeletionIcon.react tag="span" elementSize="small" />
         </div>
       </div>
     );

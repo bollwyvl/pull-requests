@@ -1,5 +1,5 @@
-import { isNull, isUndefined } from 'lodash';
 import * as React from 'react';
+import { caretUpIcon, caretDownIcon } from '@jupyterlab/ui-components';
 import ReactResizeDetector from 'react-resize-detector';
 import {
   IPullRequestCommentModel,
@@ -8,6 +8,7 @@ import {
 } from '../../models';
 import moment from 'moment';
 
+import { BUTTON_CLASS } from '../../icons';
 export interface IPullRequestCommentThreadState {
   isExpanded: boolean;
   isInput: boolean;
@@ -29,7 +30,7 @@ export class PullRequestCommentThread extends React.Component<
     super(props);
     this.state = {
       isExpanded: true,
-      isInput: isNull(this.props.thread.comment) ? true : false,
+      isInput: this.props.thread.comment == null ? true : false,
       inputText: '',
       thread: this.props.thread
     };
@@ -50,7 +51,7 @@ export class PullRequestCommentThread extends React.Component<
   };
 
   onResize = (): void => {
-    if (!isUndefined(this.props.plainDiff)) {
+    if (this.props.plainDiff != null) {
       for (let comment of this.props.plainDiff.plainDiff.state.comments) {
         comment.toggleUpdate();
       }
@@ -60,7 +61,7 @@ export class PullRequestCommentThread extends React.Component<
   async handleSubmit(): Promise<void> {
     let _thread = this.props.thread;
     let payload;
-    if (!isNull(this.state.thread.comment)) {
+    if (this.state.thread.comment != null) {
       payload = _thread.getCommentReplyBody(this.state.inputText);
     } else {
       payload = _thread.getCommentNewBody(this.state.inputText);
@@ -72,7 +73,7 @@ export class PullRequestCommentThread extends React.Component<
 
   handleCancel(): void {
     // If no other comments, canceling should remove this thread
-    if (isNull(this.state.thread.comment)) {
+    if (this.state.thread.comment == null) {
       this.props.handleRemove(); // for component specific remove methods
     } else {
       this.setState({ isInput: false });
@@ -87,7 +88,7 @@ export class PullRequestCommentThread extends React.Component<
         </div>
         <div className="jp-PullRequestCommentItemContent">
           <div className="jp-PullRequestCommentItemContentTitle">
-            <h2>{item.username}</h2>
+            <label>{item.username}</label>
             <p>{moment(item.updatedAt).fromNow()}</p>
           </div>
           <p>{item.text}</p>
@@ -100,25 +101,28 @@ export class PullRequestCommentThread extends React.Component<
     return (
       <div className="jp-PullRequestComment">
         <div className="jp-PullRequestCommentHeader">
-          {!this.state.isExpanded && !isNull(this.state.thread.comment) && (
+          {!this.state.isExpanded && this.state.thread.comment != null && (
             <p>
               {this.state.thread.comment.username}:{' '}
               {this.state.thread.comment.text}
             </p>
           )}
-          <span
-            className={
-              'jp-Icon jp-Icon-20 ' +
-              (this.state.isExpanded ? 'jp-CaretUp-icon' : 'jp-CaretDown-icon')
-            }
+          <button
+            {...BUTTON_CLASS}
             onClick={() =>
               this.setState({ isExpanded: !this.state.isExpanded })
             }
-          />
+          >
+            {this.state.isExpanded ? (
+              <caretUpIcon.react tag="span" />
+            ) : (
+              <caretDownIcon.react tag="span" />
+            )}
+          </button>
         </div>
         {this.state.isExpanded && (
           <div>
-            {!isNull(this.state.thread.comment) && (
+            {this.state.thread.comment != null && (
               <div>
                 {this.getCommentItemDom(this.state.thread.comment)}
                 <div>

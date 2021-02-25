@@ -1,4 +1,3 @@
-import { isUndefined, uniqueId } from 'lodash';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { PullRequestCommentThread } from './components/diff/PullRequestCommentThread';
@@ -102,7 +101,7 @@ export class PullRequestFileModel {
         username: jsonresult['user_name'],
         userpic: jsonresult['user_pic']
       });
-      if (!isUndefined(jsonresult['in_reply_to_id'])) {
+      if (jsonresult['in_reply_to_id'] != null) {
         for (let result of results) {
           if (result.id === jsonresult['in_reply_to_id']) {
             if (item.comment != null) {
@@ -159,7 +158,7 @@ export class PullRequestCommentThreadModel {
     this.file = file;
     this.replies = [];
     this.commitId = file.commitId;
-    this.id = uniqueId(file.id + '-');
+    this.id = file.id + '-' + ++Private.nextId;
     if (typeof given === 'number') {
       this.lineNumber = given;
       this.comment = null;
@@ -321,4 +320,8 @@ export class PullRequestPlainDiffCommentThreadModel {
   domNode: HTMLElement | null;
   plainDiff: PlainDiffComponent;
   thread: PullRequestCommentThreadModel;
+}
+
+namespace Private {
+  export let nextId = 0;
 }

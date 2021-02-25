@@ -3,6 +3,12 @@ import { BeatLoader } from 'react-spinners';
 import { PullRequestFileModel, PullRequestModel } from '../../models';
 import { doRequest } from '../../utils';
 import { PullRequestBrowserFileItem } from './PullRequestBrowserFileItem';
+import {
+  launcherIcon,
+  caretUpIcon,
+  caretDownIcon
+} from '@jupyterlab/ui-components';
+import { BUTTON_CLASS } from '../../icons';
 
 export interface IPullRequestBrowserItemState {
   data: PullRequestModel[];
@@ -113,7 +119,7 @@ export class PullRequestBrowserItem extends React.Component<
     return (
       <li className="jp-PullRequestBrowserItem">
         <header>
-          <h2>{this.props.header}</h2>
+          <label>{this.props.header}</label>
           <BeatLoader
             size={5}
             color={'var(--jp-ui-font-color1)'}
@@ -121,33 +127,34 @@ export class PullRequestBrowserItem extends React.Component<
           />
         </header>
         {this.state.error != null ? (
-          <h2 className="jp-PullRequestBrowserItemError">
+          <blockquote className="jp-PullRequestBrowserItemError">
             <span style={{ color: 'var(--jp-ui-font-color1)' }}>
               Error Listing Pull Requests:
             </span>{' '}
             {this.state.error}
-          </h2>
+          </blockquote>
         ) : (
           <ul className="jp-PullRequestBrowserItemList">
             {this.state.data.map((result, i) => (
               <div key={i} onClick={() => this.props.showTab(result)}>
                 <li className="jp-PullRequestBrowserItemListItem">
-                  <h2>{result.title}</h2>
-                  <div className="jp-PullRequestBrowserItemListItemIconWrapper">
-                    <span
-                      className="jp-Icon jp-Icon-16 jp-LinkIcon"
-                      onClick={e => this.openLink(e, result.link)}
-                    />
-                    <span
-                      className={
-                        'jp-Icon jp-Icon-16 ' +
-                        (result.isExpanded
-                          ? 'jp-CaretUp-icon'
-                          : 'jp-CaretDown-icon')
-                      }
-                      onClick={e => this.toggleFilesExpanded(e, i)}
-                    />
-                  </div>
+                  <button
+                    onClick={e => this.openLink(e, result.link)}
+                    {...BUTTON_CLASS}
+                  >
+                    <launcherIcon.react elementSize="small" tag="span" />
+                  </button>
+                  <label>{result.title}</label>
+                  <button
+                    {...BUTTON_CLASS}
+                    onClick={e => this.toggleFilesExpanded(e, i)}
+                  >
+                    {result.isExpanded ? (
+                      <caretUpIcon.react tag="span" />
+                    ) : (
+                      <caretDownIcon.react tag="span" />
+                    )}
+                  </button>
                 </li>
                 {result.isExpanded && (
                   <ul className="jp-PullRequestBrowserItemFileList">
