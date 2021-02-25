@@ -54,6 +54,7 @@
     "react-spinners": "^0.10.6"
   },
   "devDependencies": {
+    "@jupyterlab/builder": "^3.0.4",
     "@microsoft/tsdoc": "^0.12.9",
     "@types/codemirror": "^0.0.76",
     "@types/d3-color": "^1.2.2",
@@ -85,14 +86,14 @@
     "webpack": "^5.3.1",
     "webpack-cli": "^4.1.0"
   },
+  "resolutions": {
+    "nbdime": "6.1.0-beta.1"
+  },
   "jupyterlab": {
     "extension": true,
     "outputDir": "jupyterlab_pullrequests/labextension",
     "sharedPackages": {
       "nbdime": {
-        "bundled": true
-      },
-      "react-monaco-editor": {
         "bundled": true
       }
     },

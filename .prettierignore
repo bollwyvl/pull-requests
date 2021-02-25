@@ -5,6 +5,7 @@
 **/static
 **/.ipynb_checkpoints
 **/labextension
+**/.pytest_cache
 tests/**/coverage
 
 .eggs

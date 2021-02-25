@@ -35,7 +35,7 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
     void this.performDiff();
   }
 
-  render(): JSX.Element {
+  render(): JSX.Element | null {
     if (!isUndefined(this.state.error)) {
       return (
         <h2 className="jp-PullRequestTabError">

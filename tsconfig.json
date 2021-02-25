@@ -20,5 +20,5 @@
     "target": "es2017",
     "types": ["jest", "node"]
   },
-  "include": ["./src/**/*", "./tests/**/*"]
+  "include": ["./src/**/*"]
 }
