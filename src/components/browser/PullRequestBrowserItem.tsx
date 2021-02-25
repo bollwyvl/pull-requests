@@ -7,7 +7,7 @@ import { PullRequestBrowserFileItem } from './PullRequestBrowserFileItem';
 export interface IPullRequestBrowserItemState {
   data: PullRequestModel[];
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export interface IPullRequestBrowserItemProps {
@@ -25,7 +25,7 @@ export class PullRequestBrowserItem extends React.Component<
     this.state = { data: [], isLoading: true, error: null };
   }
 
-  async componentDidMount() {
+  async componentDidMount(): Promise<void> {
     await this.fetchPRs();
   }
 
@@ -49,7 +49,7 @@ export class PullRequestBrowserItem extends React.Component<
       }
       // render PRs while files load
       this.setState({ data: results, isLoading: true, error: null }, () => {
-        this.fetchFiles(results);
+        void this.fetchFiles(results);
       });
     } catch (err) {
       let msg = 'Unknown Error';
@@ -106,10 +106,10 @@ export class PullRequestBrowserItem extends React.Component<
     file: PullRequestFileModel
   ) {
     e.stopPropagation();
-    this.props.showTab(file);
+    void this.props.showTab(file);
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <li className="jp-PullRequestBrowserItem">
         <header>

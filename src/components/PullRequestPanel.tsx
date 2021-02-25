@@ -41,7 +41,9 @@ export class PullRequestPanel extends Widget {
   }
 
   // Show tab window for specific PR
-  showTab = async (data: PullRequestFileModel | PullRequestModel) => {
+  showTab = async (
+    data: PullRequestFileModel | PullRequestModel
+  ): Promise<void> => {
     let tab = this.getTab(data.id);
     if (tab == null) {
       tab = new PullRequestTabWidget(
@@ -69,7 +71,7 @@ export class PullRequestPanel extends Widget {
     return null;
   }
 
-  getApp() {
+  getApp(): JupyterFrontEnd {
     return this._app;
   }
 

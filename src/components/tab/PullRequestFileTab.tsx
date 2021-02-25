@@ -8,9 +8,9 @@ import { NBDiff } from '../diff/NBDiff';
 import { PlainDiffComponent } from '../diff/PlainDiffComponent';
 
 export interface IPullRequestFileTabState {
-  file: PullRequestFileModel;
+  file: PullRequestFileModel | null;
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export interface IPullRequestFileTabProps {
@@ -30,8 +30,8 @@ export class PullRequestFileTab extends React.Component<
     this.state = { file: null, isLoading: true, error: null };
   }
 
-  async componentDidMount() {
-    this.spinnerContainer.current.appendChild(new Spinner().node);
+  async componentDidMount(): Promise<void> {
+    this.spinnerContainer.current?.appendChild(new Spinner().node);
     await this.loadDiff();
   }
 
@@ -51,7 +51,7 @@ export class PullRequestFileTab extends React.Component<
     this.setState({ file: _data, isLoading: false, error: null });
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="jp-PullRequestTab">
         {!this.state.isLoading ? (

@@ -34,7 +34,9 @@ describe('PullRequestBrowserItem', () => {
     });
     it('should have a header with text props.header', () => {
       expect(component.find('header h2')).toHaveLength(1);
-      expect(component.contains([<h2>{props.header}</h2>])).toEqual(true);
+      expect(component.contains([<h2 key="noop">{props.header}</h2>])).toEqual(
+        true
+      );
     });
     it('should not load list item if failed api request', () => {
       component.setState({ data: [], isLoading: false, error: null });
@@ -89,7 +91,7 @@ describe('PullRequestBrowserItem', () => {
       expect(component.find('.jp-PullRequestBrowserItemError')).toHaveLength(1);
       expect(
         component.contains([
-          <h2 className="jp-PullRequestBrowserItemError">
+          <h2 className="jp-PullRequestBrowserItemError" key="noop">
             <span style={{ color: 'var(--jp-ui-font-color1)' }}>
               Error Listing Pull Requests:
             </span>{' '}
@@ -103,7 +105,7 @@ describe('PullRequestBrowserItem', () => {
       expect(component.find('.jp-PullRequestBrowserItemError')).toHaveLength(0);
       expect(
         component.contains([
-          <h2 className="jp-PullRequestBrowserItemError">
+          <h2 className="jp-PullRequestBrowserItemError" key="noop">
             <span style={{ color: 'var(--jp-ui-font-color1)' }}>
               Error Listing Pull Requests:
             </span>{' '}

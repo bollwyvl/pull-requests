@@ -41,6 +41,7 @@ describe('PullRequestBrowser', () => {
             showTab={props.showTab}
             header={'Created by Me'}
             filter={'created'}
+            key="noop"
           ></PullRequestBrowserItem>
         ])
       ).toEqual(true);
@@ -50,6 +51,7 @@ describe('PullRequestBrowser', () => {
             showTab={props.showTab}
             header={'Assigned to Me'}
             filter={'assigned'}
+            key="noop"
           ></PullRequestBrowserItem>
         ])
       ).toEqual(true);

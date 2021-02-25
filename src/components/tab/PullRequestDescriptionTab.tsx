@@ -7,7 +7,7 @@ import { PullRequestModel } from '../../models';
 export interface IPullRequestDescriptionTabState {
   pr: PullRequestModel;
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export interface IPullRequestDescriptionTabProps {
@@ -26,12 +26,12 @@ export class PullRequestDescriptionTab extends React.Component<
     this.state = { pr: props.pr, isLoading: true, error: null };
   }
 
-  componentDidMount() {
-    this.spinnerContainer.current.appendChild(new Spinner().node);
+  componentDidMount(): void {
+    this.spinnerContainer.current?.appendChild(new Spinner().node);
     this.setState({ isLoading: false });
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="jp-PullRequestTab">
         {!this.state.isLoading ? (

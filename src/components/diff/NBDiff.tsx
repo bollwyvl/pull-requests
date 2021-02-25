@@ -19,23 +19,23 @@ export interface IDiffProps {
 }
 
 export interface INBDiffState {
-  nbdModel: NotebookDiffModel;
-  prChunks: PullRequestChunkModel[];
-  error: string;
+  nbdModel: NotebookDiffModel | null;
+  prChunks: PullRequestChunkModel[] | null;
+  error: string | null;
 }
 
 export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
   constructor(props: IDiffProps) {
     super(props);
     this.state = {
-      nbdModel: undefined,
-      prChunks: undefined,
-      error: undefined
+      nbdModel: null,
+      prChunks: null,
+      error: null
     };
-    this.performDiff();
+    void this.performDiff();
   }
 
-  render() {
+  render(): JSX.Element {
     if (!isUndefined(this.state.error)) {
       return (
         <h2 className="jp-PullRequestTabError">
@@ -49,36 +49,38 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
       !isUndefined(this.state.nbdModel) &&
       !isUndefined(this.state.prChunks)
     ) {
-      const cellComponents = this.state.prChunks.map((prChunk, index) => (
-        <div className="jp-PullRequestNBDiff" key={index}>
-          <div className="jp-PullRequestCellDiff">
-            <div className="jp-PullRequestCellDiffContent">
-              <CellDiff
-                cellChunk={prChunk.chunk}
-                mimeType={this.state.nbdModel.mimetype}
-              />
+      const cellComponents = (this.state.prChunks || []).map(
+        (prChunk, index) => (
+          <div className="jp-PullRequestNBDiff" key={index}>
+            <div className="jp-PullRequestCellDiff">
+              <div className="jp-PullRequestCellDiffContent">
+                <CellDiff
+                  cellChunk={prChunk.chunk || []}
+                  mimeType={this.state.nbdModel?.mimetype || 'text/plain'}
+                />
+              </div>
+              <div className="jp-PullRequestCellDiffCommentContainer">
+                {prChunk.lineNumber?.lineNumberStart != null && (
+                  <div
+                    className="jp-PullRequestCellDiffComment"
+                    onClick={() => this.addComment(index)}
+                  >
+                    <div className="jp-PullRequestCommentDecoration"></div>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="jp-PullRequestCellDiffCommentContainer">
-              {!isUndefined(prChunk.lineNumber.lineNumberStart) && (
-                <div
-                  className="jp-PullRequestCellDiffComment"
-                  onClick={() => this.addComment(index)}
-                >
-                  <div className="jp-PullRequestCommentDecoration"></div>
-                </div>
-              )}
-            </div>
+            {!isUndefined(prChunk.comments) &&
+              prChunk.comments.map((comment, i) => (
+                <PullRequestCommentThread
+                  key={i}
+                  thread={comment}
+                  handleRemove={() => this.removeComment(index, comment)}
+                />
+              ))}
           </div>
-          {!isUndefined(prChunk.comments) &&
-            prChunk.comments.map((comment, i) => (
-              <PullRequestCommentThread
-                key={i}
-                thread={comment}
-                handleRemove={() => this.removeComment(index, comment)}
-              />
-            ))}
-        </div>
-      ));
+        )
+      );
       return (
         <RenderMimeProvider value={this.props.renderMime}>
           <div className="jp-git-diff-Widget">
@@ -156,29 +158,41 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
   }
 
   private addComment(i: number) {
-    for (let comment of this.state.prChunks[i].comments) {
-      if (isNull(comment.comment)) {
+    const oldChunk = (this.state.prChunks || [])[i];
+
+    if (oldChunk == null || oldChunk.lineNumber == null) {
+      return;
+    }
+
+    for (let comment of oldChunk.comments || []) {
+      if (comment.comment == null) {
         return;
       }
     }
 
     let commentToAdd: PullRequestCommentThreadModel = new PullRequestCommentThreadModel(
       this.props.file,
-      this.state.prChunks[i].lineNumber.lineNumberStart
+      oldChunk.lineNumber.lineNumberStart
     );
 
-    let prChunks = [...this.state.prChunks];
+    let prChunks = [...(this.state.prChunks || [])];
     let prChunk = { ...prChunks[i] };
-    prChunk.comments = [...prChunk.comments, commentToAdd];
+    prChunk.comments = [...(prChunk.comments || []), commentToAdd];
     prChunks[i] = prChunk;
-    this.setState({ prChunks: prChunks });
+    this.setState({ prChunks });
   }
 
-  removeComment(i: number, commentToRemove: PullRequestCommentThreadModel) {
+  removeComment(
+    i: number,
+    commentToRemove: PullRequestCommentThreadModel
+  ): void {
+    if (this.state.prChunks == null) {
+      return;
+    }
     let prChunks = [...this.state.prChunks];
     let prChunk = { ...prChunks[i] };
     prChunk.comments = [
-      ...prChunk.comments.filter(comment => comment !== commentToRemove)
+      ...(prChunk.comments || []).filter(comment => comment !== commentToRemove)
     ];
     prChunks[i] = prChunk;
     this.setState({ prChunks: prChunks });
@@ -198,10 +212,7 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
       for (let cell of chunk) {
         // Add line numbers if it exists in remote
         if (!isNull(cell.source.remote)) {
-          let prChunk: PullRequestChunkModel = new PullRequestChunkModel(
-            chunk,
-            this.props.file
-          );
+          let prChunk = new PullRequestChunkModel(chunk, this.props.file);
           let headNbdimeSource = cell.source.remote;
           let headContentSource: string = '';
           for (let line of contentCells.data.cells[i].source) {
@@ -224,8 +235,10 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
           let prCellComments: PullRequestCommentThreadModel[] = [];
           this.props.file.comments.forEach(thread => {
             if (
+              prChunk.lineNumber &&
               thread.lineNumber >= prChunk.lineNumber.lineNumberStart &&
-              thread.lineNumber <= prChunk.lineNumber.lineNumberEnd
+              thread.lineNumber <= prChunk.lineNumber.lineNumberEnd &&
+              thread.comment != null
             ) {
               prCellComments.push(
                 new PullRequestCommentThreadModel(
@@ -248,7 +261,10 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
 }
 
 export class ModifiedChunkPair {
-  constructor(addedCell: CellDiffModel, removedCell: CellDiffModel) {
+  constructor(
+    addedCell: CellDiffModel | null,
+    removedCell: CellDiffModel | null
+  ) {
     this.addedCell = addedCell;
     this.removedCell = removedCell;
   }
@@ -268,8 +284,8 @@ export class ModifiedChunkPair {
     return arr;
   }
 
-  addedCell: CellDiffModel;
-  removedCell: CellDiffModel;
+  addedCell: CellDiffModel | null;
+  removedCell: CellDiffModel | null;
 }
 
 export interface IPullRequestLineNumber {

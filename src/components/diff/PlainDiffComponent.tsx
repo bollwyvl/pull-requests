@@ -1,6 +1,6 @@
 import { IThemeManager } from '@jupyterlab/apputils';
 import * as d3 from 'd3-color';
-import { isNull, isUndefined } from 'lodash';
+import { isNull } from 'lodash';
 import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import ReactResizeDetector from 'react-resize-detector';
@@ -37,7 +37,7 @@ let URLS: { [key: string]: string } = {
 };
 
 export interface IPlainDiffComponentState {
-  diffEditor: monaco.editor.IStandaloneDiffEditor;
+  diffEditor: monaco.editor.IStandaloneDiffEditor | null;
   comments: PullRequestPlainDiffCommentThreadModel[];
   decorations: string[];
 }
@@ -56,17 +56,17 @@ export class PlainDiffComponent extends React.Component<
     this.state = { diffEditor: null, comments: [], decorations: [] };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.addMonacoEditor();
   }
 
-  onResize = () => {
-    if (!isNull(this.state.diffEditor)) {
+  onResize = (): void => {
+    if (this.state.diffEditor != null) {
       this.state.diffEditor.layout();
     }
   };
 
-  render() {
+  render(): JSX.Element {
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <div
@@ -85,8 +85,8 @@ export class PlainDiffComponent extends React.Component<
   private getLanguage(ext: string): string {
     const langs = monaco.languages.getLanguages();
     for (let lang of langs) {
-      if (lang['extensions'].indexOf(ext) !== -1) {
-        if (!isUndefined(lang['mimetypes']) && lang['mimetypes'].length > 0) {
+      if ((lang.extensions || []).indexOf(ext) !== -1) {
+        if (lang.mimetypes != null && lang['mimetypes'].length > 0) {
           return lang['mimetypes'][0];
         } else {
           return lang['id'];
@@ -97,15 +97,15 @@ export class PlainDiffComponent extends React.Component<
   }
 
   private getVariableHex(varname: string): string {
-    return d3
-      .color(getComputedStyle(document.body).getPropertyValue(varname).trim())
-      .hex();
+    const color = d3.color(
+      getComputedStyle(document.body).getPropertyValue(varname).trim()
+    );
+    return color != null ? color.formatHex() : '#616161';
   }
 
   private updateTheme() {
-    let isLight: boolean = this.props.themeManager.isLight(
-      this.props.themeManager.theme
-    );
+    const { theme } = this.props.themeManager;
+    let isLight = theme == null ? true : this.props.themeManager.isLight(theme);
     monaco.editor.defineTheme('PlainDiffComponent', {
       base: isLight ? 'vs' : 'vs-dark',
       inherit: true,
@@ -146,25 +146,31 @@ export class PlainDiffComponent extends React.Component<
     this.updateTheme();
     monaco.editor.setTheme('PlainDiffComponent');
 
-    let diffEditor = monaco.editor.createDiffEditor(
-      document.getElementById(`monacocontainer-${this.props.file.id}`),
-      options
+    const container = document.getElementById(
+      `monacocontainer-${this.props.file.id}`
     );
-    diffEditor.setModel({
-      original: baseModel,
-      modified: headModel
-    });
 
-    this.props.themeManager.themeChanged.connect(() => this.updateTheme());
-    this.setState({ diffEditor: diffEditor }, () => {
-      this.initComments();
-      this.handleMouseEvents();
-    });
+    if (container != null) {
+      let diffEditor = monaco.editor.createDiffEditor(container, options);
+      diffEditor.setModel({
+        original: baseModel,
+        modified: headModel
+      });
+
+      this.props.themeManager.themeChanged.connect(() => this.updateTheme());
+      this.setState({ diffEditor }, () => {
+        this.initComments();
+        this.handleMouseEvents();
+      });
+    }
   }
 
   private initComments() {
     let pdcomments: PullRequestPlainDiffCommentThreadModel[] = [];
     for (let thread of this.props.file.comments) {
+      if (thread.comment == null) {
+        continue;
+      }
       const pdcomment = new PullRequestPlainDiffCommentThreadModel(
         new PullRequestCommentThreadModel(this.props.file, thread.comment),
         this
@@ -180,7 +186,7 @@ export class PlainDiffComponent extends React.Component<
     }));
   }
 
-  removeComment(commentToRemove: PullRequestPlainDiffCommentThreadModel) {
+  removeComment(commentToRemove: PullRequestPlainDiffCommentThreadModel): void {
     this.setState(
       prevState => ({
         comments: [
@@ -194,6 +200,9 @@ export class PlainDiffComponent extends React.Component<
   }
 
   private handleMouseEvents() {
+    if (this.state.diffEditor == null) {
+      return;
+    }
     // Show add comment decoration on mouse move
     this.state.diffEditor.getModifiedEditor().onMouseMove(e => {
       if (!isNull(e.target['position'])) {
@@ -208,14 +217,13 @@ export class PlainDiffComponent extends React.Component<
     });
     this.state.diffEditor.getModifiedEditor().onMouseDown(e => {
       if (
-        e.target['element']['classList'].contains(
-          'jp-PullRequestCommentDecoration'
-        )
+        e.target.element != null &&
+        e.target.element.classList.contains('jp-PullRequestCommentDecoration')
       ) {
-        let lineNumber = parseInt(
-          e.target['element']['parentElement']['innerText'],
-          10
-        );
+        if (e.target.element.parentElement?.innerText == null) {
+          return;
+        }
+        let lineNumber = parseInt(e.target.element.parentElement.innerText, 10);
         for (let comment of this.state.comments) {
           if (
             isNull(comment.thread.comment) &&
@@ -235,6 +243,9 @@ export class PlainDiffComponent extends React.Component<
   }
 
   private updateCommentDecoration(lineNumber: number) {
+    if (this.state.diffEditor == null) {
+      return;
+    }
     let newDecorations = this.state.diffEditor
       .getModifiedEditor()
       .deltaDecorations(this.state.decorations, [
@@ -250,7 +261,7 @@ export class PlainDiffComponent extends React.Component<
   }
 
   private removeCommentDecoration() {
-    if (this.state.decorations.length > 0) {
+    if (this.state.diffEditor != null && this.state.decorations.length > 0) {
       let newDecorations = this.state.diffEditor
         .getModifiedEditor()
         .deltaDecorations(this.state.decorations, []);

@@ -38,18 +38,18 @@ export class PullRequestCommentThread extends React.Component<
   componentDidUpdate(
     prevProps: IPullRequestCommentThreadProps,
     prevState: IPullRequestCommentThreadState
-  ) {
+  ): void {
     // Don't update plain diff it its only a input text change
     if (this.state.inputText !== prevState.inputText) {
       return;
     }
   }
 
-  handleInputChange = (event: any) => {
-    this.setState({ inputText: event.target.value });
+  handleInputChange = (event: React.FormEvent<HTMLInputElement>): void => {
+    this.setState({ inputText: (event.target as HTMLInputElement).value });
   };
 
-  onResize = () => {
+  onResize = (): void => {
     if (!isUndefined(this.props.plainDiff)) {
       for (let comment of this.props.plainDiff.plainDiff.state.comments) {
         comment.toggleUpdate();
@@ -57,7 +57,7 @@ export class PullRequestCommentThread extends React.Component<
     }
   };
 
-  async handleSubmit() {
+  async handleSubmit(): Promise<void> {
     let _thread = this.props.thread;
     let payload;
     if (!isNull(this.state.thread.comment)) {
@@ -70,7 +70,7 @@ export class PullRequestCommentThread extends React.Component<
     this.setState({ inputText: '' });
   }
 
-  handleCancel() {
+  handleCancel(): void {
     // If no other comments, canceling should remove this thread
     if (isNull(this.state.thread.comment)) {
       this.props.handleRemove(); // for component specific remove methods
@@ -79,7 +79,7 @@ export class PullRequestCommentThread extends React.Component<
     }
   }
 
-  getCommentItemDom(item: IPullRequestCommentModel) {
+  getCommentItemDom(item: IPullRequestCommentModel): JSX.Element {
     return (
       <div className="jp-PullRequestCommentItem">
         <div className="jp-PullRequestCommentItemImg">
@@ -96,7 +96,7 @@ export class PullRequestCommentThread extends React.Component<
     );
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="jp-PullRequestComment">
         <div className="jp-PullRequestCommentHeader">

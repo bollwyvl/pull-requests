@@ -16,7 +16,7 @@ export class PullRequestBrowserFileItem extends React.Component<
     this.state = { data: [], isLoading: true, error: null };
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div
         className="jp-PullRequestBrowserFileItem"

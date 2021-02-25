@@ -13,12 +13,16 @@ import {
 describe('PullRequestBrowserItem', () => {
   let newProps: IPullRequestCommentThreadProps = {
     thread: SamplePullRequestCommentThreadItemNew,
-    handleRemove: () => {}
+    handleRemove: () => {
+      // empty line for lint
+    }
   };
 
   let replyProps: IPullRequestCommentThreadProps = {
     thread: SamplePullRequestCommentThreadItemReply,
-    handleRemove: () => {}
+    handleRemove: () => {
+      // empty line for lint
+    }
   };
 
   // Test constructor

@@ -87,7 +87,7 @@ export class PullRequestFileModel {
     this.headcontent = jsonresults['head_content'];
   }
 
-  async loadComments() {
+  async loadComments(): Promise<void> {
     let jsonresults = await doRequest(
       `pullrequests/files/comments?id=${this.pr.id}&filename=${this.name}`,
       'GET'
@@ -105,7 +105,9 @@ export class PullRequestFileModel {
       if (!isUndefined(jsonresult['in_reply_to_id'])) {
         for (let result of results) {
           if (result.id === jsonresult['in_reply_to_id']) {
-            result.replies.push(item.comment);
+            if (item.comment != null) {
+              result.replies.push(item.comment);
+            }
           }
         }
       } else {
@@ -167,15 +169,15 @@ export class PullRequestCommentThreadModel {
     }
   }
 
-  getCommentReplyBody(text: string): any {
+  getCommentReplyBody(text: string): Record<string, unknown> {
     const request = {
       text: text,
-      in_reply_to: this.comment.id
+      in_reply_to: this.comment?.id
     };
     return request;
   }
 
-  getCommentNewBody(text: string): any {
+  getCommentNewBody(text: string): Record<string, unknown> {
     const request = {
       text: text,
       filename: this.file.name,
@@ -185,7 +187,7 @@ export class PullRequestCommentThreadModel {
     return request;
   }
 
-  async postComment(body: any) {
+  async postComment(body: Record<string, unknown>): Promise<void> {
     let jsonresult = await doRequest(
       `pullrequests/files/comments?id=${this.file.pr.id}&filename=${this.file.name}`,
       'POST',
@@ -199,10 +201,11 @@ export class PullRequestCommentThreadModel {
       username: jsonresult['user_name'],
       userpic: jsonresult['user_pic']
     });
-    if (this.comment == null) {
-      this.comment = item.comment;
+    const { comment } = item;
+    if (comment == null) {
+      this.comment = comment;
     } else {
-      this.replies.push(item.comment);
+      this.replies.push(comment);
     }
   }
 
@@ -210,7 +213,7 @@ export class PullRequestCommentThreadModel {
   file: PullRequestFileModel;
   commitId: string;
   lineNumber: number;
-  comment: IPullRequestCommentModel;
+  comment: IPullRequestCommentModel | null;
   replies: IPullRequestCommentModel[];
 }
 
@@ -234,7 +237,7 @@ export class PullRequestPlainDiffCommentThreadModel {
     this.initComment();
   }
 
-  initComment() {
+  initComment(): void {
     let overlayDom = document.createElement('div');
     overlayDom.style.width = '100%';
     overlayDom.style.visibility = 'visible';
@@ -262,17 +265,17 @@ export class PullRequestPlainDiffCommentThreadModel {
     );
   }
 
-  toggleUpdate() {
+  toggleUpdate(): void {
     this.removeFromEditor();
     this.addToEditor();
   }
 
-  deleteComment() {
+  deleteComment(): void {
     this.removeFromEditor();
-    this.domNode.remove();
+    this.domNode?.remove();
   }
 
-  private addToEditor() {
+  private addToEditor(): void {
     let zoneNode = document.createElement('div');
     zoneNode.id = this.thread.id;
     let marginZoneNode = document.createElement('div');
@@ -282,29 +285,33 @@ export class PullRequestPlainDiffCommentThreadModel {
       .changeViewZones(changeAccessor => {
         this.viewZoneId = changeAccessor.addZone({
           afterLineNumber: this.thread.lineNumber,
-          heightInPx: this.domNode.clientHeight,
+          heightInPx: this.domNode?.clientHeight || 0,
           domNode: zoneNode,
           marginDomNode: marginZoneNode,
           onDomNodeTop: top => {
-            this.domNode.style.top = top + 'px';
-            this.domNode.style.visibility = 'visible';
+            if (this.domNode != null) {
+              this.domNode.style.top = `${top}px`;
+              this.domNode.style.visibility = 'visible';
+            }
           }
         });
       });
   }
 
-  removeFromEditor() {
+  removeFromEditor(): void {
     const tempViewZoneId = this.viewZoneId;
     this.plainDiff.state.diffEditor
       .getModifiedEditor()
       .changeViewZones(function (changeAccessor) {
-        changeAccessor.removeZone(tempViewZoneId);
+        if (tempViewZoneId != null) {
+          changeAccessor.removeZone(tempViewZoneId);
+        }
       });
     this.viewZoneId = null;
   }
 
-  viewZoneId: number;
-  domNode: HTMLElement;
+  viewZoneId: string | null;
+  domNode: HTMLElement | null;
   plainDiff: PlainDiffComponent;
   thread: PullRequestCommentThreadModel;
 }

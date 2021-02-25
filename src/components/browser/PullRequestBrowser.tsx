@@ -16,7 +16,7 @@ export class PullRequestBrowser extends React.Component<
     super(props);
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="jp-PullRequestBrowser">
         <ul>
