@@ -1,0 +1,24 @@
+name: jupyterlab-pull-requests
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  # runtimes
+  - python >=3.6,<3.10
+  - nodejs >=12,!=13.*,<15
+  - git
+  # client
+  - jupyterlab >=3,<4
+  # packaging
+  - pip
+  - wheel
+  - twine
+  # test
+  - asynctest
+  - pytest
+  # TODO: use the real stuff
+  - pip:
+    - jupyterlab-git >=0.30.0b2
+    - nbdime >=3.0.0b1

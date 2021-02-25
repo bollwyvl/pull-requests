@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+jlpm --ignore-optional
+jlpm lint
+jlpm build
+python -m pip install -e . --no-deps --ignore-installed -v
+jupyter serverextension enable --py jupyterlab_pullrequests
+jupyter labextension lists
