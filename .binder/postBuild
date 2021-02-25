@@ -14,6 +14,7 @@ python -m pip install -e . --no-deps --ignore-installed -v
 
 # manually enable extension
 jupyter serverextension enable --py jupyterlab_pullrequests
+jupyter server extension enable --py jupyterlab_pullrequests
 
 # verify install
 jupyter labextension list
