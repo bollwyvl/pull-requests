@@ -1,19 +1,26 @@
 {
+  "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
     "declaration": true,
-    "lib": ["es2015", "dom"],
-    "module": "commonjs",
+    "esModuleInterop": true,
+    "incremental": true,
+    "jsx": "react",
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
-    "outDir": "lib",
-    "strict": true,
-    "strictNullChecks": false,
-    "esModuleInterop": true,
-    "target": "es2015",
-    "types": ["node"],
-    "jsx": "react",
-    "resolveJsonModule": true
+    "outDir": "./lib/",
+    "preserveWatchOutput": true,
+    "resolveJsonModule": true,
+    "rootDir": "./src/",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es2017",
+    "types": []
   },
-  "include": ["src/*"]
+  "include": ["./src/*"]
 }

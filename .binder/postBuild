@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
+set -eux
+
+# prefling node stuff
 jlpm --ignore-optional
 jlpm lint
 jlpm build
+
+# install labextension in editable mode
 jupyter labextension develop --overwrite .
+
+# install python package
 python -m pip install -e . --no-deps --ignore-installed -v
+
+# manually enable extension
 jupyter serverextension enable --py jupyterlab_pullrequests
-jupyter labextension lists
+
+# verify install
+jupyter labextension list
+jupyter server extension list
