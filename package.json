@@ -26,9 +26,12 @@
     "url": "https://github.com/jupyterlab/pull-requests.git"
   },
   "scripts": {
-    "build": "webpack && tsc",
+    "build": "jlpm build:webpack && jlpm build:ts && jlpm build:labext",
+    "build:webpack": "webpack",
+    "build:ts": "tsc -b",
+    "build:labext": "jupyter labextension build .",
     "clean": "rimraf lib",
-    "watch": "tsc -w",
+    "watch": "jlpm build -w",
     "test": "jest",
     "lint": "jlpm && jlpm prettier && jlpm eslint",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
