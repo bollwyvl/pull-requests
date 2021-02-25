@@ -1,6 +1,6 @@
-import * as React from "react";
-import { PullRequestFileModel, PullRequestModel } from "../../models";
-import { PullRequestBrowserItem } from "./PullRequestBrowserItem";
+import * as React from 'react';
+import { PullRequestFileModel, PullRequestModel } from '../../models';
+import { PullRequestBrowserItem } from './PullRequestBrowserItem';
 
 export interface IPullRequestBrowserState {}
 
@@ -22,13 +22,13 @@ export class PullRequestBrowser extends React.Component<
         <ul>
           <PullRequestBrowserItem
             showTab={this.props.showTab}
-            header={"Created by Me"}
-            filter={"created"}
+            header={'Created by Me'}
+            filter={'created'}
           />
           <PullRequestBrowserItem
             showTab={this.props.showTab}
-            header={"Assigned to Me"}
-            filter={"assigned"}
+            header={'Assigned to Me'}
+            filter={'assigned'}
           />
         </ul>
       </div>

@@ -54,7 +54,10 @@
   margin: 0;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserItemListItem {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserItemListItem {
   display: flex;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,11 +65,18 @@
   margin: auto;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserItemListItem:hover {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserItemListItem:hover {
   background-color: var(--jp-layout-color2);
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserItemListItem h2 {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserItemListItem
+  h2 {
   font-size: var(--jp-ui-font-size1);
   color: var(--jp-ui-font-color1);
   font-weight: 400;
@@ -78,18 +88,29 @@
   text-overflow: ellipsis;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserItemListItem .jp-PullRequestBrowserItemListItemIconWrapper {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserItemListItem
+  .jp-PullRequestBrowserItemListItemIconWrapper {
   display: flex;
   flex: 1;
   justify-content: flex-end;
   padding: 4px 12px 4px 4px;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserItemListItem span {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserItemListItem
+  span {
   margin: 0;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserFileItem {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserFileItem {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -98,7 +119,10 @@
   padding: 4px 12px 4px 12px;
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemList .jp-PullRequestBrowserFileItem:hover {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemList
+  .jp-PullRequestBrowserFileItem:hover {
   background-color: var(--jp-layout-color2);
 }
 
@@ -156,7 +180,9 @@
   background-image: url(pullrequest-deletion-dark.svg);
 }
 
-.jp-PullRequestBrowser .jp-PullRequestBrowserItem .jp-PullRequestBrowserItemError {
+.jp-PullRequestBrowser
+  .jp-PullRequestBrowserItem
+  .jp-PullRequestBrowserItemError {
   font-size: var(--jp-ui-font-size0);
   font-weight: 400;
   letter-spacing: 1px;
@@ -274,18 +300,26 @@
   font-weight: 400;
 }
 
-.jp-PullRequestTab .jp-PullRequestComment .jp-PullRequestInputContainer .jp-PullRequestInputButtonContainer {
+.jp-PullRequestTab
+  .jp-PullRequestComment
+  .jp-PullRequestInputContainer
+  .jp-PullRequestInputButtonContainer {
   display: flex;
   flex: 1;
   justify-content: flex-end;
 }
 
-.jp-PullRequestTab .jp-PullRequestComment .jp-PullRequestInputContainer .jp-PullRequestInputButtonContainer button {
+.jp-PullRequestTab
+  .jp-PullRequestComment
+  .jp-PullRequestInputContainer
+  .jp-PullRequestInputButtonContainer
+  button {
   margin-top: 4px;
   margin-left: 4px;
 }
 
-.jp-PullRequestInputContainer button.jp-Button-flat.jp-mod-styled.jp-mod-accept:disabled {
+.jp-PullRequestInputContainer
+  button.jp-Button-flat.jp-mod-styled.jp-mod-accept:disabled {
   opacity: 0.4;
 }
 
@@ -323,7 +357,7 @@
   padding: 8px;
   width: 100%;
   resize: none;
-  box-sizing:border-box;
+  box-sizing: border-box;
 }
 
 .jp-PullRequestCommentItem {
@@ -352,11 +386,16 @@
   margin: 0;
 }
 
-.jp-PullRequestCommentItem .jp-PullRequestCommentItemContent .jp-PullRequestCommentItemContentTitle {
+.jp-PullRequestCommentItem
+  .jp-PullRequestCommentItemContent
+  .jp-PullRequestCommentItemContentTitle {
   display: flex;
 }
 
-.jp-PullRequestCommentItem .jp-PullRequestCommentItemContent .jp-PullRequestCommentItemContentTitle p {
+.jp-PullRequestCommentItem
+  .jp-PullRequestCommentItemContent
+  .jp-PullRequestCommentItemContentTitle
+  p {
   color: var(--jp-ui-font-color2);
   margin-left: 4px;
   padding: 0;
@@ -369,7 +408,8 @@
 }
 
 .jp-PullRequestCommentDecoration {
-  background-image: url(pullrequest-plus.svg), linear-gradient(var(--jp-brand-color1), var(--jp-brand-color1));
+  background-image: url(pullrequest-plus.svg),
+    linear-gradient(var(--jp-brand-color1), var(--jp-brand-color1));
   border-radius: var(--jp-border-radius);
   background-size: contain;
   background-repeat: no-repeat;
@@ -378,7 +418,7 @@
   height: 18px !important;
   margin-left: 2px;
   z-index: 1;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .jp-PullRequestCommentDecoration:hover {
@@ -389,11 +429,19 @@
   text-align: right !important;
 }
 
-[data-jp-theme-light='true'] .jp-PullRequestTab .monaco-editor .current-line ~ .line-numbers {
+[data-jp-theme-light='true']
+  .jp-PullRequestTab
+  .monaco-editor
+  .current-line
+  ~ .line-numbers {
   color: var(--jp-ui-font-color0);
 }
 
-[data-jp-theme-light='false'] .jp-PullRequestTab .monaco-editor .current-line ~ .line-numbers {
+[data-jp-theme-light='false']
+  .jp-PullRequestTab
+  .monaco-editor
+  .current-line
+  ~ .line-numbers {
   color: var(--jp-ui-font-color2);
 }
 
@@ -429,20 +477,27 @@
   margin-left: 8px;
 }
 
-.jp-PullRequestCellDiff .jp-PullRequestCellDiffCommentContainer .jp-PullRequestCellDiffComment {
+.jp-PullRequestCellDiff
+  .jp-PullRequestCellDiffCommentContainer
+  .jp-PullRequestCellDiffComment {
   width: 100%;
   height: 100%;
   border: 2px solid var(--jp-brand-color1);
   border-radius: var(--jp-border-radius);
   border-left: 0;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
-.jp-PullRequestCellDiff .jp-PullRequestCellDiffCommentContainer .jp-PullRequestCellDiffComment:hover {
+.jp-PullRequestCellDiff
+  .jp-PullRequestCellDiffCommentContainer
+  .jp-PullRequestCellDiffComment:hover {
   transform: scale(1.1);
 }
 
-.jp-PullRequestCellDiff .jp-PullRequestCellDiffCommentContainer .jp-PullRequestCellDiffComment .jp-PullRequestCommentDecoration {
+.jp-PullRequestCellDiff
+  .jp-PullRequestCellDiffCommentContainer
+  .jp-PullRequestCellDiffComment
+  .jp-PullRequestCommentDecoration {
   position: absolute;
   margin-left: 8px;
   top: 50%;

@@ -1,17 +1,17 @@
-import * as nbformat from "@jupyterlab/nbformat";
-import { RenderMimeProvider } from "@jupyterlab/git/lib/components/diff/Diff";
-import { CellDiff } from "@jupyterlab/git/lib/components/diff/NbDiff";
-import { IRenderMimeRegistry } from "@jupyterlab/rendermime";
-import { isNull, isUndefined } from "lodash";
-import { IDiffEntry } from "nbdime/lib/diff/diffentries";
-import { CellDiffModel, NotebookDiffModel } from "nbdime/lib/diff/model";
-import * as React from "react";
+import * as nbformat from '@jupyterlab/nbformat';
+import { RenderMimeProvider } from '@jupyterlab/git/lib/components/diff/Diff';
+import { CellDiff } from '@jupyterlab/git/lib/components/diff/NbDiff';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { isNull, isUndefined } from 'lodash';
+import { IDiffEntry } from 'nbdime/lib/diff/diffentries';
+import { CellDiffModel, NotebookDiffModel } from 'nbdime/lib/diff/model';
+import * as React from 'react';
 import {
   PullRequestCommentThreadModel,
   PullRequestFileModel
-} from "../../models";
-import { doRequest } from "../../utils";
-import { PullRequestCommentThread } from "./PullRequestCommentThread";
+} from '../../models';
+import { doRequest } from '../../utils';
+import { PullRequestCommentThread } from './PullRequestCommentThread';
 
 export interface IDiffProps {
   file: PullRequestFileModel;
@@ -39,9 +39,9 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
     if (!isUndefined(this.state.error)) {
       return (
         <h2 className="jp-PullRequestTabError">
-          <span style={{ color: "var(--jp-ui-font-color1)" }}>
+          <span style={{ color: 'var(--jp-ui-font-color1)' }}>
             Error Loading File:
-          </span>{" "}
+          </span>{' '}
           {this.state.error}
         </h2>
       );
@@ -98,12 +98,12 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
 
   private async performDiff() {
     try {
-      let jsonresults = await doRequest("pullrequests/files/nbdiff", "POST", {
+      let jsonresults = await doRequest('pullrequests/files/nbdiff', 'POST', {
         prev_content: this.props.file.basecontent,
         curr_content: this.props.file.headcontent
       });
-      let base = jsonresults["base"] as nbformat.INotebookContent;
-      let diff = (jsonresults["diff"] as any) as IDiffEntry[];
+      let base = jsonresults['base'] as nbformat.INotebookContent;
+      let diff = (jsonresults['diff'] as any) as IDiffEntry[];
       let nbdModel = new NotebookDiffModel(base, diff);
       this.setState({
         nbdModel: nbdModel,
@@ -188,7 +188,7 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
     originalChunks: CellDiffModel[][]
   ): PullRequestChunkModel[] {
     // Parse headContent
-    let jsonMap = require("json-source-map");
+    let jsonMap = require('json-source-map');
     let contentCells = jsonMap.parse(this.props.file.headcontent);
 
     // Unchunk, add line numbers if applicable, and rechunk
@@ -203,22 +203,22 @@ export class NBDiff extends React.Component<IDiffProps, INBDiffState> {
             this.props.file
           );
           let headNbdimeSource = cell.source.remote;
-          let headContentSource: string = "";
+          let headContentSource: string = '';
           for (let line of contentCells.data.cells[i].source) {
             headContentSource += line;
           }
           if (headNbdimeSource !== headContentSource) {
             throw new Error(
-              "Error parsing line numbers: Mismatched source nbdime (" +
+              'Error parsing line numbers: Mismatched source nbdime (' +
                 headNbdimeSource +
-                ") and content (" +
+                ') and content (' +
                 headContentSource +
-                ")"
+                ')'
             );
           }
           prChunk.lineNumber = {
-            lineNumberStart: contentCells.pointers["/cells/" + i].value.line,
-            lineNumberEnd: contentCells.pointers["/cells/" + i].valueEnd.line
+            lineNumberStart: contentCells.pointers['/cells/' + i].value.line,
+            lineNumberEnd: contentCells.pointers['/cells/' + i].valueEnd.line
           };
           // Add any comments within the range
           let prCellComments: PullRequestCommentThreadModel[] = [];

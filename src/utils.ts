@@ -1,4 +1,4 @@
-import { ServerConnection } from "@jupyterlab/services";
+import { ServerConnection } from '@jupyterlab/services';
 
 // API request wrapper
 function httpRequest(
