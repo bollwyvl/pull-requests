@@ -112,3 +112,6 @@ yarn.lock
 .pyc
 
 .DS_Store
+
+# built files
+jupyterlab_pullrequests/labextension

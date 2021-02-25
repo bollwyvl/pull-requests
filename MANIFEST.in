@@ -1,0 +1,4 @@
+include license
+recursive-include etc *
+recursive-include jupyterlab_pullrequests/labextension *
+global-exclude .ipynb_checkpoints node_modules

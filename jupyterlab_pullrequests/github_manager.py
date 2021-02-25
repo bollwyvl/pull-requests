@@ -1,14 +1,19 @@
 import json
 from http import HTTPStatus
 
-import tornado.gen as gen
-from jupyterlab_pullrequests.manager import PullRequestsManager
-from notebook.utils import url_path_join
+from tornado import gen
+
+from jupyter_server.utils import url_path_join
+
 from tornado.httpclient import AsyncHTTPClient, HTTPClientError, HTTPRequest
 from tornado.httputil import url_concat
 from tornado.web import HTTPError
 
+from .manager import PullRequestsManager
+
+
 GITHUB_API_BASE_URL = "https://api.github.com"
+
 
 class PullRequestsGithubManager(PullRequestsManager):
 
@@ -27,7 +32,7 @@ class PullRequestsGithubManager(PullRequestsManager):
 
         git_url = url_path_join(GITHUB_API_BASE_URL, "user")
         data = yield self.call_github(git_url)
-        
+
         return {'username': data["login"]}
 
     def get_search_filter(self, username, pr_filter):
@@ -126,7 +131,7 @@ class PullRequestsGithubManager(PullRequestsManager):
 
         base_content = yield self.get_link_content(base_raw_url)
         head_content = yield self.get_link_content(head_raw_url)
-        
+
         return {'base_content':base_content, 'head_content':head_content, 'commit_id':links["commit_id"]}
 
     # -----------------------------------------------------------------------------

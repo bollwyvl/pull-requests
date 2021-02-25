@@ -1,27 +1,49 @@
-"""
-Basic Setup Module
-"""
+"""setup for jupyterlab_pullrequests with JupyterLab federated extension"""
 import setuptools
+from pathlib import Path
+import json
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+HERE = Path(__file__).parent
+ETC_DEST = "etc/jupyter"
+NAME = "jupyterlab_pullrequests"
+EXT = HERE / NAME / "labextension"
+PKG = json.loads((EXT / "package.json").read_text(encoding="utf-8"))
 
-tests_require = ["pytest", "asynctest"]
+DATA_FILES = []
+
+# serverextension
+DATA_FILES += [
+    (f"{ETC_DEST}/jupyter_{app}_config.d", [f"etc/jupyterlab-pull-requests-{app}.json"])
+    for app in ["server", "notebook"]
+]
+
 
 setup_args = dict(
-    name="jupyterlab_pullrequests",
-    version="0.3.0",
-    author="Jupyter Development Team",
-    license="BSD-3-Clause",
-    description="A server extension for JupyterLab's pull request extension",
-    long_description=long_description,
+    name=NAME,
+    version=PKG["version"],
+    author=PKG["author"],
+    license=PKG["license"],
+    description=PKG["description"],
+    long_description=(HERE / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(),
-    install_requires=["notebook", "nbdime"],
-    tests_require=tests_require,
-    extras_require={'test': tests_require},
-    package_data={"jupyterlab_pullrequests": ["*"]},
+    packages=setuptools.find_packages(".", exclude=["tests*"]),
+    python_requires=">=3.6",
+    install_requires=[
+        "jupyterlab >=3",
+        # TODO: replace when real
+        "nbdime >=3.0.0b1"
+    ],
+    extras_require={
+        "test": [
+            "pytest",
+            "asynctest"
+        ]
+    },
+    include_package_data=True,
+    data_files=DATA_FILES,
+    zip_safe=False,
 )
+
 
 if __name__ == "__main__":
     setuptools.setup(**setup_args)

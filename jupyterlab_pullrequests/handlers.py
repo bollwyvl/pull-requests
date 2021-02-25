@@ -5,11 +5,12 @@ import json
 from collections import namedtuple
 from http import HTTPStatus
 
-import tornado.escape as escape
-import tornado.gen as gen
-from jupyterlab_pullrequests.base import PullRequestsAPIHandler
-from notebook.utils import url_path_join
+from tornado import escape, gen
 from tornado.web import HTTPError, MissingArgumentError
+from jupyter_server.utils import url_path_join
+
+from .base import PullRequestsAPIHandler
+
 
 # -----------------------------------------------------------------------------
 # /pullrequests/prs/user Handler
@@ -26,7 +27,7 @@ class ListPullRequestsUserHandler(PullRequestsAPIHandler):
     def validate_request(self, pr_filter):
         if not (pr_filter == "created" or pr_filter == "assigned"):
             raise HTTPError(
-                status_code=HTTPStatus.BAD_REQUEST, 
+                status_code=HTTPStatus.BAD_REQUEST,
                 reason=f"Invalid parameter 'filter'. Expected value 'created' or 'assigned', received '{pr_filter}'."
             )
 
@@ -35,7 +36,7 @@ class ListPullRequestsUserHandler(PullRequestsAPIHandler):
 
         pr_filter = get_request_attr_value(self, "filter")
         self.validate_request(pr_filter) # handler specific validation
-        
+
         current_user = yield self.manager.get_current_user()
         prs = yield self.manager.list_prs(current_user['username'], pr_filter)
         self.finish(json.dumps(prs))
@@ -128,7 +129,7 @@ class PullRequestsFileNBDiffHandler(PullRequestsAPIHandler):
             content = yield self.manager.get_file_nbdiff(prev_content, curr_content)
         except Exception as e:
             raise HTTPError(
-                status_code=HTTPStatus.INTERNAL_SERVER_ERROR, 
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 reason=f"Error diffing content: {e}."
             )
         self.finish(json.dumps(content))
