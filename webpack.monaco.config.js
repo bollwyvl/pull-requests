@@ -6,11 +6,11 @@ const webpack = require('webpack');
 module.exports = {
   entry: {
     // Package each language's worker and give these filenames in `getWorkerUrl`
-    "editor.worker": 'monaco-editor/esm/vs/editor/editor.worker.js',
-    "json.worker": 'monaco-editor/esm/vs/language/json/json.worker',
-    "css.worker": 'monaco-editor/esm/vs/language/css/css.worker',
-    "html.worker": 'monaco-editor/esm/vs/language/html/html.worker',
-    "ts.worker": 'monaco-editor/esm/vs/language/typescript/ts.worker',
+    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
+    'css.worker': 'monaco-editor/esm/vs/language/css/css.worker',
+    'html.worker': 'monaco-editor/esm/vs/language/html/html.worker',
+    'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker'
   },
   output: {
     filename: 'JUPYTERLAB_FILE_LOADER_jupyterlab-pullrequests-[name].bundle.js',
@@ -18,10 +18,12 @@ module.exports = {
     globalObject: 'self'
   },
   module: {
-    rules: [{
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader']
-    }]
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
   },
   mode: 'development',
   devtool: 'source-map',

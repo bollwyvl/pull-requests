@@ -1,14 +1,22 @@
 import json
 from http import HTTPStatus
 
-import tornado.gen as gen
-from jupyterlab_pullrequests.manager import PullRequestsManager
-from notebook.utils import url_path_join
+from tornado import gen
+
+from jupyter_server.utils import url_path_join
+
 from tornado.httpclient import AsyncHTTPClient, HTTPClientError, HTTPRequest
 from tornado.httputil import url_concat
 from tornado.web import HTTPError
 
+from .manager import PullRequestsManager
+from ._version import __version__
+
 GITHUB_API_BASE_URL = "https://api.github.com"
+
+# User agents required for Github API, see https://developer.github.com/v3/#user-agent-required
+USER_AGENT = f"jupyterlab-pullrequests-v{__version__}"
+
 
 class PullRequestsGithubManager(PullRequestsManager):
 
@@ -27,7 +35,7 @@ class PullRequestsGithubManager(PullRequestsManager):
 
         git_url = url_path_join(GITHUB_API_BASE_URL, "user")
         data = yield self.call_github(git_url)
-        
+
         return {'username': data["login"]}
 
     def get_search_filter(self, username, pr_filter):
@@ -126,7 +134,7 @@ class PullRequestsGithubManager(PullRequestsManager):
 
         base_content = yield self.get_link_content(base_raw_url)
         head_content = yield self.get_link_content(head_raw_url)
-        
+
         return {'base_content':base_content, 'head_content':head_content, 'commit_id':links["commit_id"]}
 
     # -----------------------------------------------------------------------------
@@ -171,17 +179,20 @@ class PullRequestsGithubManager(PullRequestsManager):
     @gen.coroutine
     def call_github(self, git_url, load_json=True, method="GET", body=None):
 
-        params = {"Accept": "application/vnd.github.v3+json", "access_token": self.access_token}
+        params = {"Accept": "application/vnd.github.v3+json"}
+        headers = {"Authorization": f"token {self.access_token}"}
+        url = url_concat(git_url, params)
+        request_kwargs = dict(user_agent=USER_AGENT, headers=headers)
 
-        # User agents required for Github API, see https://developer.github.com/v3/#user-agent-required
         try:
             if method.lower() == "get":
-                request = HTTPRequest(
-                    url_concat(git_url, params), validate_cert=True, user_agent="JupyterLab Pull Requests"
-                )
+                request = HTTPRequest(url, **request_kwargs)
             elif method.lower() == "post":
                 request = HTTPRequest(
-                    url_concat(git_url, params), validate_cert=True, user_agent="JupyterLab Pull Requests", method="POST", body=json.dumps(body)
+                    url,
+                    method="POST",
+                    body=json.dumps(body),
+                    **request_kwargs,
                 )
             else:
                 raise ValueError()

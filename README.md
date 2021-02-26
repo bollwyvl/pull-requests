@@ -58,7 +58,6 @@ where "`<YOUR_ACCESS_TOKEN>`" is the string value you obtained above.
 
 Congrats, you did it! Launch JupyterLab and look for the Pull Request tab on the left! 🎉
 
-
 ## Development
 
 ### Contributing

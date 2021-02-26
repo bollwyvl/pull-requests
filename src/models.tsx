@@ -1,9 +1,8 @@
-import { isUndefined, uniqueId } from "lodash";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { PullRequestCommentThread } from "./components/diff/PullRequestCommentThread";
-import { PlainDiffComponent } from "./components/diff/PlainDiffComponent";
-import { doRequest } from "./utils";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { PullRequestCommentThread } from './components/diff/PullRequestCommentThread';
+import { PlainDiffComponent } from './components/diff/PlainDiffComponent';
+import { doRequest } from './utils';
 
 // -----------------------------------------------------------------------------
 // Pull Request Model
@@ -29,17 +28,17 @@ export class PullRequestModel {
 
   async getFiles(): Promise<void> {
     let jsonresults = await doRequest(
-      "pullrequests/prs/files?id=" + this.id,
-      "GET"
+      'pullrequests/prs/files?id=' + this.id,
+      'GET'
     );
     let results: PullRequestFileModel[] = [];
     for (let jsonresult of jsonresults) {
       results.push(
         new PullRequestFileModel(
-          jsonresult["name"],
-          jsonresult["status"],
-          jsonresult["additions"],
-          jsonresult["deletions"],
+          jsonresult['name'],
+          jsonresult['status'],
+          jsonresult['additions'],
+          jsonresult['deletions'],
           this
         )
       );
@@ -73,39 +72,41 @@ export class PullRequestFileModel {
     this.additions = additions;
     this.deletions = deletions;
     this.pr = pr;
-    this.id = this.pr.internalId + "-" + this.name;
+    this.id = this.pr.internalId + '-' + this.name;
     this.extension = this.getExtension(this.name);
   }
 
   async loadFile(): Promise<void> {
     let jsonresults = await doRequest(
       `pullrequests/files/content?id=${this.pr.id}&filename=${this.name}`,
-      "GET"
+      'GET'
     );
-    this.commitId = jsonresults["commit_id"];
-    this.basecontent = jsonresults["base_content"];
-    this.headcontent = jsonresults["head_content"];
+    this.commitId = jsonresults['commit_id'];
+    this.basecontent = jsonresults['base_content'];
+    this.headcontent = jsonresults['head_content'];
   }
 
-  async loadComments() {
+  async loadComments(): Promise<void> {
     let jsonresults = await doRequest(
       `pullrequests/files/comments?id=${this.pr.id}&filename=${this.name}`,
-      "GET"
+      'GET'
     );
     let results: PullRequestCommentThreadModel[] = [];
     for (let jsonresult of jsonresults) {
       const item = new PullRequestCommentThreadModel(this, {
-        id: jsonresult["id"],
-        text: jsonresult["text"],
-        updatedAt: jsonresult["updated_at"],
-        lineNumber: jsonresult["line_number"],
-        username: jsonresult["user_name"],
-        userpic: jsonresult["user_pic"]
+        id: jsonresult['id'],
+        text: jsonresult['text'],
+        updatedAt: jsonresult['updated_at'],
+        lineNumber: jsonresult['line_number'],
+        username: jsonresult['user_name'],
+        userpic: jsonresult['user_pic']
       });
-      if (!isUndefined(jsonresult["in_reply_to_id"])) {
+      if (jsonresult['in_reply_to_id'] != null) {
         for (let result of results) {
-          if (result.id === jsonresult["in_reply_to_id"]) {
-            result.replies.push(item.comment);
+          if (result.id === jsonresult['in_reply_to_id']) {
+            if (item.comment != null) {
+              result.replies.push(item.comment);
+            }
           }
         }
       } else {
@@ -116,10 +117,10 @@ export class PullRequestFileModel {
   }
 
   private getExtension(filename: string): string {
-    return `.${filename.substring(
-      filename.lastIndexOf(".") + 1,
-      filename.length
-    ) || filename}`;
+    return `.${
+      filename.substring(filename.lastIndexOf('.') + 1, filename.length) ||
+      filename
+    }`;
   }
 
   id: string;
@@ -157,8 +158,8 @@ export class PullRequestCommentThreadModel {
     this.file = file;
     this.replies = [];
     this.commitId = file.commitId;
-    this.id = uniqueId(file.id + "-");
-    if (typeof given === "number") {
+    this.id = file.id + '-' + ++Private.nextId;
+    if (typeof given === 'number') {
       this.lineNumber = given;
       this.comment = null;
     } else {
@@ -167,15 +168,15 @@ export class PullRequestCommentThreadModel {
     }
   }
 
-  getCommentReplyBody(text: string): any {
+  getCommentReplyBody(text: string): Record<string, unknown> {
     const request = {
       text: text,
-      in_reply_to: this.comment.id
+      in_reply_to: this.comment?.id
     };
     return request;
   }
 
-  getCommentNewBody(text: string): any {
+  getCommentNewBody(text: string): Record<string, unknown> {
     const request = {
       text: text,
       filename: this.file.name,
@@ -185,24 +186,25 @@ export class PullRequestCommentThreadModel {
     return request;
   }
 
-  async postComment(body: any) {
+  async postComment(body: Record<string, unknown>): Promise<void> {
     let jsonresult = await doRequest(
       `pullrequests/files/comments?id=${this.file.pr.id}&filename=${this.file.name}`,
-      "POST",
+      'POST',
       body
     );
     const item = new PullRequestCommentThreadModel(this.file, {
-      id: jsonresult["id"],
-      text: jsonresult["text"],
-      updatedAt: jsonresult["updated_at"],
-      lineNumber: jsonresult["line_number"],
-      username: jsonresult["user_name"],
-      userpic: jsonresult["user_pic"]
+      id: jsonresult['id'],
+      text: jsonresult['text'],
+      updatedAt: jsonresult['updated_at'],
+      lineNumber: jsonresult['line_number'],
+      username: jsonresult['user_name'],
+      userpic: jsonresult['user_pic']
     });
-    if (this.comment == null) {
-      this.comment = item.comment;
+    const { comment } = item;
+    if (comment == null) {
+      this.comment = comment;
     } else {
-      this.replies.push(item.comment);
+      this.replies.push(comment);
     }
   }
 
@@ -210,7 +212,7 @@ export class PullRequestCommentThreadModel {
   file: PullRequestFileModel;
   commitId: string;
   lineNumber: number;
-  comment: IPullRequestCommentModel;
+  comment: IPullRequestCommentModel | null;
   replies: IPullRequestCommentModel[];
 }
 
@@ -234,19 +236,21 @@ export class PullRequestPlainDiffCommentThreadModel {
     this.initComment();
   }
 
-  initComment() {
-    let overlayDom = document.createElement("div");
-    overlayDom.style.width = "100%";
-    overlayDom.style.visibility = "visible";
+  initComment(): void {
+    let overlayDom = document.createElement('div');
+    overlayDom.style.width = '100%';
+    overlayDom.style.visibility = 'visible';
 
     let overlayWidget = {
-      getId: () => "overlay.zone.widget." + this.thread.id,
+      getId: () => 'overlay.zone.widget.' + this.thread.id,
       getDomNode: () => overlayDom,
       getPosition: (): any => null
     };
-    this.plainDiff.state.diffEditor
-      .getModifiedEditor()
-      .addOverlayWidget(overlayWidget);
+    if (this.plainDiff.state.diffEditor) {
+      this.plainDiff.state.diffEditor
+        .getModifiedEditor()
+        .addOverlayWidget(overlayWidget);
+    }
 
     ReactDOM.render(
       <PullRequestCommentThread
@@ -262,49 +266,62 @@ export class PullRequestPlainDiffCommentThreadModel {
     );
   }
 
-  toggleUpdate() {
+  toggleUpdate(): void {
     this.removeFromEditor();
     this.addToEditor();
   }
 
-  deleteComment() {
+  deleteComment(): void {
     this.removeFromEditor();
-    this.domNode.remove();
+    this.domNode?.remove();
   }
 
-  private addToEditor() {
-    let zoneNode = document.createElement("div");
+  private addToEditor(): void {
+    let zoneNode = document.createElement('div');
     zoneNode.id = this.thread.id;
-    let marginZoneNode = document.createElement("div");
+    let marginZoneNode = document.createElement('div');
 
+    if (this.plainDiff.state.diffEditor == null) {
+      return;
+    }
     this.plainDiff.state.diffEditor
       .getModifiedEditor()
       .changeViewZones(changeAccessor => {
         this.viewZoneId = changeAccessor.addZone({
           afterLineNumber: this.thread.lineNumber,
-          heightInPx: this.domNode.clientHeight,
+          heightInPx: this.domNode?.clientHeight || 0,
           domNode: zoneNode,
           marginDomNode: marginZoneNode,
           onDomNodeTop: top => {
-            this.domNode.style.top = top + "px";
-            this.domNode.style.visibility = "visible";
+            if (this.domNode != null) {
+              this.domNode.style.top = `${top}px`;
+              this.domNode.style.visibility = 'visible';
+            }
           }
         });
       });
   }
 
-  removeFromEditor() {
+  removeFromEditor(): void {
     const tempViewZoneId = this.viewZoneId;
-    this.plainDiff.state.diffEditor
-      .getModifiedEditor()
-      .changeViewZones(function(changeAccessor) {
-        changeAccessor.removeZone(tempViewZoneId);
-      });
+    if (this.plainDiff.state.diffEditor != null) {
+      this.plainDiff.state.diffEditor
+        .getModifiedEditor()
+        .changeViewZones(function (changeAccessor) {
+          if (tempViewZoneId != null) {
+            changeAccessor.removeZone(tempViewZoneId);
+          }
+        });
+    }
     this.viewZoneId = null;
   }
 
-  viewZoneId: number;
-  domNode: HTMLElement;
+  viewZoneId: string | null;
+  domNode: HTMLElement | null;
   plainDiff: PlainDiffComponent;
   thread: PullRequestCommentThreadModel;
+}
+
+namespace Private {
+  export let nextId = 0;
 }

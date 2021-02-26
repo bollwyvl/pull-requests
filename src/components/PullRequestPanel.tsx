@@ -1,11 +1,13 @@
-import { JupyterFrontEnd } from "@jupyterlab/application";
-import { IThemeManager, Toolbar } from "@jupyterlab/apputils";
-import { IRenderMimeRegistry } from "@jupyterlab/rendermime";
-import { PanelLayout, Widget } from "@lumino/widgets";
-import { PullRequestFileModel, PullRequestModel } from "../models";
-import { PullRequestBrowserWidget } from "./browser/PullRequestBrowserWidget";
-import { PullRequestToolbar } from "./PullRequestToolbar";
-import { PullRequestTabWidget } from "./tab/PullRequestTabWidget";
+import { JupyterFrontEnd } from '@jupyterlab/application';
+import { IThemeManager, Toolbar } from '@jupyterlab/apputils';
+import { MainAreaWidget } from '@jupyterlab/apputils';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { PanelLayout, Widget } from '@lumino/widgets';
+import { PullRequestFileModel, PullRequestModel } from '../models';
+import { PullRequestBrowserWidget } from './browser/PullRequestBrowserWidget';
+import { PullRequestToolbar } from './PullRequestToolbar';
+import { PullRequestTabWidget } from './tab/PullRequestTabWidget';
+import { prIcon } from '../icons';
 
 export class PullRequestPanel extends Widget {
   private _app: JupyterFrontEnd;
@@ -13,7 +15,7 @@ export class PullRequestPanel extends Widget {
   private _renderMime: IRenderMimeRegistry;
   private _toolbar: Toolbar;
   private _browser: PullRequestBrowserWidget;
-  private _tabs: PullRequestTabWidget[];
+  private _tabs: MainAreaWidget[];
 
   constructor(
     app: JupyterFrontEnd,
@@ -21,12 +23,12 @@ export class PullRequestPanel extends Widget {
     renderMime: IRenderMimeRegistry
   ) {
     super();
-    this.addClass("jp-PullRequestPanel");
+    this.addClass('jp-PullRequestPanel');
     this.layout = new PanelLayout();
 
-    this.title.iconClass = "jp-PullRequest-icon jp-SideBar-tabIcon";
-    this.title.caption = "Pull Requests";
-    this.id = "pullrequests";
+    this.title.icon = prIcon;
+    this.title.caption = 'Pull Requests';
+    this.id = 'pullrequests';
 
     this._app = app;
     this._themeManager = themeManager;
@@ -41,35 +43,44 @@ export class PullRequestPanel extends Widget {
   }
 
   // Show tab window for specific PR
-  showTab = async (data: PullRequestFileModel | PullRequestModel) => {
-    let tab = this.getTab(data.id);
-    if (tab == null) {
-      tab = new PullRequestTabWidget(
+  showTab = async (
+    data: PullRequestFileModel | PullRequestModel
+  ): Promise<void> => {
+    let main = this.getTab(data.id);
+    if (main == null) {
+      const tab = new PullRequestTabWidget(
         data,
         this._themeManager,
         this._renderMime
       );
+      main = new MainAreaWidget({ content: tab });
+      main.disposed.connect(() => {
+        if (main != null) {
+          this._tabs.splice(this._tabs.indexOf(main));
+        }
+      });
       tab.update();
-      this._tabs.push(tab);
+      this._tabs.push(main);
     }
-    if (!tab.isAttached) {
-      this._app.shell.add(tab, "main");
+
+    if (!main.isAttached) {
+      this._app.shell.add(main, 'main');
     } else {
-      tab.update();
+      main.content.update();
     }
-    this._app.shell.activateById(tab.id);
+    this._app.shell.activateById(main.id);
   };
 
-  private getTab(id: string) {
-    for (let tab of this._tabs) {
-      if (tab.id.toString() === id.toString()) {
-        return tab;
+  private getTab(id: string): MainAreaWidget | null {
+    for (let main of this._tabs) {
+      if (main.content.id.toString() === id.toString()) {
+        return main;
       }
     }
     return null;
   }
 
-  getApp() {
+  getApp(): JupyterFrontEnd {
     return this._app;
   }
 

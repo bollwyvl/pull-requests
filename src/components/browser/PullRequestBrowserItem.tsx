@@ -1,13 +1,19 @@
-import * as React from "react";
-import { BeatLoader } from "react-spinners";
-import { PullRequestFileModel, PullRequestModel } from "../../models";
-import { doRequest } from "../../utils";
-import { PullRequestBrowserFileItem } from "./PullRequestBrowserFileItem";
+import * as React from 'react';
+import { BeatLoader } from 'react-spinners';
+import { PullRequestFileModel, PullRequestModel } from '../../models';
+import { doRequest } from '../../utils';
+import { PullRequestBrowserFileItem } from './PullRequestBrowserFileItem';
+import {
+  launcherIcon,
+  caretDownIcon,
+  caretRightIcon
+} from '@jupyterlab/ui-components';
+import { DANGER_BUTTON, MINIMAL_BUTTON } from '../../icons';
 
 export interface IPullRequestBrowserItemState {
   data: PullRequestModel[];
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export interface IPullRequestBrowserItemProps {
@@ -25,34 +31,34 @@ export class PullRequestBrowserItem extends React.Component<
     this.state = { data: [], isLoading: true, error: null };
   }
 
-  async componentDidMount() {
+  async componentDidMount(): Promise<void> {
     await this.fetchPRs();
   }
 
   private async fetchPRs() {
     try {
       let jsonresults = await doRequest(
-        "pullrequests/prs/user?filter=" + this.props.filter,
-        "GET"
+        'pullrequests/prs/user?filter=' + this.props.filter,
+        'GET'
       );
       let results: PullRequestModel[] = [];
       for (let jsonresult of jsonresults) {
         results.push(
           new PullRequestModel(
-            jsonresult["id"],
-            jsonresult["title"],
-            jsonresult["body"],
-            jsonresult["url"],
-            jsonresult["internal_id"]
+            jsonresult['id'],
+            jsonresult['title'],
+            jsonresult['body'],
+            jsonresult['url'],
+            jsonresult['internal_id']
           )
         );
       }
       // render PRs while files load
       this.setState({ data: results, isLoading: true, error: null }, () => {
-        this.fetchFiles(results);
+        void this.fetchFiles(results);
       });
     } catch (err) {
-      let msg = "Unknown Error";
+      let msg = 'Unknown Error';
       if (
         err.response != null &&
         err.response.status != null &&
@@ -98,7 +104,7 @@ export class PullRequestBrowserItem extends React.Component<
     link: string
   ) {
     e.stopPropagation();
-    window.open(link, "_blank");
+    window.open(link, '_blank');
   }
 
   private showFileTab(
@@ -106,61 +112,70 @@ export class PullRequestBrowserItem extends React.Component<
     file: PullRequestFileModel
   ) {
     e.stopPropagation();
-    this.props.showTab(file);
+    void this.props.showTab(file);
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <li className="jp-PullRequestBrowserItem">
         <header>
-          <h2>{this.props.header}</h2>
+          <label>{this.props.header}</label>
           <BeatLoader
-            sizeUnit={"px"}
             size={5}
-            color={"var(--jp-ui-font-color1)"}
+            color={'var(--jp-ui-font-color1)'}
             loading={this.state.isLoading}
           />
         </header>
         {this.state.error != null ? (
-          <h2 className="jp-PullRequestBrowserItemError">
-            <span style={{ color: "var(--jp-ui-font-color1)" }}>
+          <blockquote className="jp-PullRequestBrowserItemError">
+            <span style={{ color: 'var(--jp-ui-font-color1)' }}>
               Error Listing Pull Requests:
-            </span>{" "}
+            </span>{' '}
             {this.state.error}
-          </h2>
+          </blockquote>
         ) : (
           <ul className="jp-PullRequestBrowserItemList">
             {this.state.data.map((result, i) => (
-              <div key={i} onClick={() => this.props.showTab(result)}>
-                <li className="jp-PullRequestBrowserItemListItem">
-                  <h2>{result.title}</h2>
-                  <div className="jp-PullRequestBrowserItemListItemIconWrapper">
-                    <span
-                      className="jp-Icon jp-Icon-16 jp-LinkIcon"
-                      onClick={e => this.openLink(e, result.link)}
-                    />
-                    <span
-                      className={
-                        "jp-Icon jp-Icon-16 " +
-                        (result.isExpanded
-                          ? "jp-CaretUp-icon"
-                          : "jp-CaretDown-icon")
-                      }
-                      onClick={e => this.toggleFilesExpanded(e, i)}
-                    />
-                  </div>
-                </li>
+              <li
+                className={`jp-PullRequestBrowserItemListItem${
+                  result.isExpanded ? ' jp-mod-expanded' : ''
+                }`}
+                key={result.internalId}
+              >
+                <button
+                  tabIndex={0}
+                  {...MINIMAL_BUTTON}
+                  onClick={e => this.toggleFilesExpanded(e, i)}
+                >
+                  {result.isExpanded ? (
+                    <caretDownIcon.react tag="span" />
+                  ) : (
+                    <caretRightIcon.react tag="span" />
+                  )}
+                </button>
+                <a tabIndex={0} onClick={() => this.props.showTab(result)}>
+                  {result.title}
+                </a>
+                <button
+                  tabIndex={0}
+                  onClick={e => this.openLink(e, result.link)}
+                  {...DANGER_BUTTON}
+                >
+                  <launcherIcon.react elementSize="small" tag="span" />
+                </button>
                 {result.isExpanded && (
                   <ul className="jp-PullRequestBrowserItemFileList">
                     {result.files != null &&
                       result.files.map((file, k) => (
-                        <li key={k} onClick={e => this.showFileTab(e, file)}>
-                          <PullRequestBrowserFileItem file={file} />
-                        </li>
+                        <PullRequestBrowserFileItem
+                          file={file}
+                          key={k}
+                          onClick={e => this.showFileTab(e, file)}
+                        />
                       ))}
                   </ul>
                 )}
-              </div>
+              </li>
             ))}
           </ul>
         )}

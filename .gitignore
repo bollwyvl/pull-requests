@@ -106,9 +106,11 @@ node_modules/
 
 package-lock.json
 
-yarn.lock
-
 .pytest_cache/
 .pyc
 
 .DS_Store
+
+# built files
+jupyterlab_pullrequests/labextension
+.yarn-packages

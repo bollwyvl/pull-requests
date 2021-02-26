@@ -2,12 +2,15 @@ import json
 import traceback
 
 import tornado.gen as gen
-from jupyterlab_pullrequests.github_manager import PullRequestsGithubManager
-from notebook.base.handlers import APIHandler
 from tornado import web
 from tornado.httpclient import AsyncHTTPClient
+
 from traitlets import Bool, Unicode
 from traitlets.config import Configurable
+
+from jupyter_server.base.handlers import APIHandler
+
+from .github_manager import PullRequestsGithubManager
 
 
 class GitHubConfig(Configurable):

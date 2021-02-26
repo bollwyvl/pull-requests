@@ -1,9 +1,12 @@
 import json
 
-import nbformat
-import tornado.gen as gen
-from nbdime import diff_notebooks
+from tornado import gen
 from tornado.httpclient import AsyncHTTPClient
+
+import nbformat
+
+from nbdime import diff_notebooks
+
 
 class PullRequestsManager():
 

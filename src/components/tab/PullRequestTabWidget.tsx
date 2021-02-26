@@ -1,12 +1,13 @@
-import { IThemeManager } from "@jupyterlab/apputils";
-import { Widget } from "@lumino/widgets";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { PullRequestFileModel, PullRequestModel } from "../../models";
-import { PullRequestFileTab } from "./PullRequestFileTab";
-import { PullRequestDescriptionTab } from "./PullRequestDescriptionTab";
-import { isUndefined } from "lodash";
-import { IRenderMimeRegistry } from "@jupyterlab/rendermime";
+import { IThemeManager } from '@jupyterlab/apputils';
+import { Widget } from '@lumino/widgets';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { PullRequestFileModel, PullRequestModel } from '../../models';
+import { PullRequestFileTab } from './PullRequestFileTab';
+import { PullRequestDescriptionTab } from './PullRequestDescriptionTab';
+import { IRenderMimeRegistry, RenderedMarkdown } from '@jupyterlab/rendermime';
+
+import { prIcon } from '../../icons';
 
 // Assumes valid json
 export class PullRequestTabWidget extends Widget {
@@ -14,6 +15,7 @@ export class PullRequestTabWidget extends Widget {
   private _pr: PullRequestModel;
   private _themeManager: IThemeManager;
   private _renderMime: IRenderMimeRegistry;
+  private _markdown: RenderedMarkdown;
 
   constructor(
     model: PullRequestFileModel | PullRequestModel,
@@ -24,9 +26,14 @@ export class PullRequestTabWidget extends Widget {
     this.title.closable = true;
     this._themeManager = themeManager;
     this._renderMime = renderMime;
+    this._markdown = renderMime.createRenderer(
+      'text/markdown'
+    ) as RenderedMarkdown;
+
     if (model instanceof PullRequestFileModel) {
       this.id = model.id; // IDs in format 123456-README.md
       this.title.label = model.name;
+      this.title.icon = prIcon;
       this._file = model;
       ReactDOM.render(
         <PullRequestFileTab
@@ -39,11 +46,13 @@ export class PullRequestTabWidget extends Widget {
     } else {
       this.id = model.id; // IDs in format 123456-README.md
       this.title.label = model.title;
+      this.title.icon = prIcon;
       this._pr = model;
       ReactDOM.render(
         <PullRequestDescriptionTab
           pr={this._pr}
           themeManager={this._themeManager}
+          markdown={this._markdown}
         />,
         this.node
       );
@@ -52,7 +61,7 @@ export class PullRequestTabWidget extends Widget {
 
   onUpdateRequest(): void {
     ReactDOM.unmountComponentAtNode(this.node);
-    if (!isUndefined(this._file)) {
+    if (this._file != null) {
       ReactDOM.render(
         <PullRequestFileTab
           file={this._file}
@@ -61,11 +70,12 @@ export class PullRequestTabWidget extends Widget {
         />,
         this.node
       );
-    } else if (!isUndefined(this._pr)) {
+    } else if (this._pr != null) {
       ReactDOM.render(
         <PullRequestDescriptionTab
           pr={this._pr}
           themeManager={this._themeManager}
+          markdown={this._markdown}
         />,
         this.node
       );

@@ -1,16 +1,15 @@
-import { IThemeManager, Spinner } from "@jupyterlab/apputils";
-import { IRenderMimeRegistry } from "@jupyterlab/rendermime";
-import { isNull } from "lodash";
-import * as React from "react";
-import { RefObject } from "react";
-import { PullRequestFileModel } from "../../models";
-import { NBDiff } from "../diff/NBDiff";
-import { PlainDiffComponent } from "../diff/PlainDiffComponent";
+import { IThemeManager, Spinner } from '@jupyterlab/apputils';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import * as React from 'react';
+import { RefObject } from 'react';
+import { PullRequestFileModel } from '../../models';
+import { NBDiff } from '../diff/NBDiff';
+import { PlainDiffComponent } from '../diff/PlainDiffComponent';
 
 export interface IPullRequestFileTabState {
-  file: PullRequestFileModel;
+  file: PullRequestFileModel | null;
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export interface IPullRequestFileTabProps {
@@ -23,17 +22,15 @@ export class PullRequestFileTab extends React.Component<
   IPullRequestFileTabProps,
   IPullRequestFileTabState
 > {
-  private spinnerContainer: RefObject<HTMLDivElement> = React.createRef<
-    HTMLDivElement
-  >();
+  private spinnerContainer: RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
   constructor(props: IPullRequestFileTabProps) {
     super(props);
     this.state = { file: null, isLoading: true, error: null };
   }
 
-  async componentDidMount() {
-    this.spinnerContainer.current.appendChild(new Spinner().node);
+  async componentDidMount(): Promise<void> {
+    this.spinnerContainer.current?.appendChild(new Spinner().node);
     await this.loadDiff();
   }
 
@@ -53,12 +50,12 @@ export class PullRequestFileTab extends React.Component<
     this.setState({ file: _data, isLoading: false, error: null });
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="jp-PullRequestTab">
         {!this.state.isLoading ? (
-          isNull(this.state.error) && !isNull(this.state.file) ? (
-            this.state.file.extension === ".ipynb" ? (
+          this.state.error == null && this.state.file != null ? (
+            this.state.file.extension === '.ipynb' ? (
               <NBDiff
                 file={this.state.file}
                 renderMime={this.props.renderMime}
@@ -70,12 +67,9 @@ export class PullRequestFileTab extends React.Component<
               />
             )
           ) : (
-            <h2 className="jp-PullRequestTabError">
-              <span style={{ color: "var(--jp-ui-font-color1)" }}>
-                Error Loading File:
-              </span>{" "}
-              {this.state.error}
-            </h2>
+            <blockquote className="jp-PullRequestTabError">
+              <span>Error Loading File:</span> {this.state.error}
+            </blockquote>
           )
         ) : (
           <div className="jp-PullRequestTabLoadingContainer">
