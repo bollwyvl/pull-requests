@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom';
 import { PullRequestFileModel, PullRequestModel } from '../../models';
 import { PullRequestFileTab } from './PullRequestFileTab';
 import { PullRequestDescriptionTab } from './PullRequestDescriptionTab';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { IRenderMimeRegistry, RenderedMarkdown } from '@jupyterlab/rendermime';
 
 import { prIcon } from '../../icons';
 
@@ -15,6 +15,7 @@ export class PullRequestTabWidget extends Widget {
   private _pr: PullRequestModel;
   private _themeManager: IThemeManager;
   private _renderMime: IRenderMimeRegistry;
+  private _markdown: RenderedMarkdown;
 
   constructor(
     model: PullRequestFileModel | PullRequestModel,
@@ -25,6 +26,10 @@ export class PullRequestTabWidget extends Widget {
     this.title.closable = true;
     this._themeManager = themeManager;
     this._renderMime = renderMime;
+    this._markdown = renderMime.createRenderer(
+      'text/markdown'
+    ) as RenderedMarkdown;
+
     if (model instanceof PullRequestFileModel) {
       this.id = model.id; // IDs in format 123456-README.md
       this.title.label = model.name;
@@ -47,6 +52,7 @@ export class PullRequestTabWidget extends Widget {
         <PullRequestDescriptionTab
           pr={this._pr}
           themeManager={this._themeManager}
+          markdown={this._markdown}
         />,
         this.node
       );
@@ -69,6 +75,7 @@ export class PullRequestTabWidget extends Widget {
         <PullRequestDescriptionTab
           pr={this._pr}
           themeManager={this._themeManager}
+          markdown={this._markdown}
         />,
         this.node
       );

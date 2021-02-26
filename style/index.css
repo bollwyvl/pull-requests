@@ -24,6 +24,11 @@
   list-style-type: none;
 }
 
+.jp-PullRequestBrowser a {
+  color: var(--jp-ui-font-color1);
+  font-weight: 700;
+}
+
 .jp-PullRequestBrowser .jp-PullRequestBrowserItem header {
   flex: 0 0 auto;
   align-items: center;
@@ -33,49 +38,71 @@
   padding-top: 8px;
 }
 
+.jp-PullRequestBrowserItem label {
+  color: var(--jp-ui-font-color1);
+}
+
 .jp-PullRequestBrowserItem header label {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--jp-ui-font-color1);
-  padding: 8px 8px 8px 12px;
+  padding: 0.5em 0.5em 0.5em 1em;
   margin: 0;
 }
 
 .jp-PullRequestBrowserItemListItem {
+  width: 100%;
   display: flex;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: auto;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
 }
 
+.jp-PullRequestBrowserItemListItem .jp-PullRequestBrowserItemFileList {
+  display: table;
+  margin: 0px auto;
+  width: 100%;
+}
+
 .jp-PullRequestBrowserItemListItem button.bp3-button {
-  flex: initial;
   margin: 0;
   padding: 0;
 }
 
-.jp-PullRequestBrowserItemListItem button.bp3-button:hover {
+.jp-PullRequestBrowserItemListItem:hover:not(.jp-mod-expanded) {
   background-color: var(--jp-layout-color2);
 }
 
-.jp-PullRequestBrowserItemListItem:hover {
-  background-color: var(--jp-layout-color2);
+.jp-PullRequestBrowserItemListItem
+  button.jp-Button.bp3-button.bp3-minimal:hover {
+  background-color: var(--jp-layout-color3);
 }
 
-.jp-PullRequestBrowserItemListItem label {
+.jp-PullRequestBrowserItemListItem > a {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-left: 0.5em;
 }
 
-.jp-PullRequestBrowserFileItem {
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
+.jp-PullRequestBrowserFileItem:hover a {
+  background-color: var(--jp-brand-color0);
+  color: white;
+}
+
+.jp-PullRequestBrowserItemFileList > .jp-PullRequestBrowserFileItem {
+  display: table-row;
+}
+
+.jp-PullRequestBrowserItemFileList > .jp-PullRequestBrowserFileItem > * {
+  display: table-cell;
   padding: 0.5em;
+}
+
+.jp-PullRequestBrowserItemFileList
+  > .jp-PullRequestBrowserFileItem
+  > :last-child {
+  padding-right: 1em;
 }
 
 .jp-PullRequestBrowserFileItem:hover {
@@ -93,6 +120,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
 }
 
 .jp-PullRequestBrowserFileItem .jp-PullRequestBrowserFileItemChanged {
@@ -100,14 +128,11 @@
 }
 
 .jp-PullRequestBrowserFileItem .jp-PullRequestBrowserFileItemDiff {
-  flex: initial;
   text-align: right;
-  max-width: 4em;
+  white-space: nowrap;
 }
 
-.jp-PullRequestBrowser
-  .jp-PullRequestBrowserItem
-  .jp-PullRequestBrowserItemError {
+.jp-PullRequestBrowserItemError {
   font-weight: 400;
   letter-spacing: 1px;
   padding: 4px 12px 4px 12px;
@@ -437,6 +462,17 @@
 
 .jp-PullRequestCellDiff .jp-PullRequestCellDiffContent {
   flex: 1;
+}
+
+/* color utilities */
+.jp-PullRequestDangerHover:hover,
+.jp-PullRequestDangerHover:active {
+  background-color: var(--jp-warn-color0) !important;
+}
+
+.jp-PullRequestDangerHover:hover svg *[fill],
+.jp-PullRequestDangerHover:active svg *[fill] {
+  fill: var(--jp-layout-color0) !important;
 }
 
 @media (min-width: 1000px) {

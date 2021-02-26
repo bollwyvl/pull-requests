@@ -8,7 +8,7 @@ import {
 } from '../../models';
 import moment from 'moment';
 
-import { BUTTON_CLASS } from '../../icons';
+import { MINIMAL_BUTTON } from '../../icons';
 export interface IPullRequestCommentThreadState {
   isExpanded: boolean;
   isInput: boolean;
@@ -108,7 +108,7 @@ export class PullRequestCommentThread extends React.Component<
             </p>
           )}
           <button
-            {...BUTTON_CLASS}
+            {...MINIMAL_BUTTON}
             onClick={() =>
               this.setState({ isExpanded: !this.state.isExpanded })
             }

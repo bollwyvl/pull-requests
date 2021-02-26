@@ -5,10 +5,10 @@ import { doRequest } from '../../utils';
 import { PullRequestBrowserFileItem } from './PullRequestBrowserFileItem';
 import {
   launcherIcon,
-  caretUpIcon,
-  caretDownIcon
+  caretDownIcon,
+  caretRightIcon
 } from '@jupyterlab/ui-components';
-import { BUTTON_CLASS } from '../../icons';
+import { DANGER_BUTTON, MINIMAL_BUTTON } from '../../icons';
 
 export interface IPullRequestBrowserItemState {
   data: PullRequestModel[];
@@ -136,37 +136,46 @@ export class PullRequestBrowserItem extends React.Component<
         ) : (
           <ul className="jp-PullRequestBrowserItemList">
             {this.state.data.map((result, i) => (
-              <div key={i} onClick={() => this.props.showTab(result)}>
-                <li className="jp-PullRequestBrowserItemListItem">
-                  <button
-                    onClick={e => this.openLink(e, result.link)}
-                    {...BUTTON_CLASS}
-                  >
-                    <launcherIcon.react elementSize="small" tag="span" />
-                  </button>
-                  <label>{result.title}</label>
-                  <button
-                    {...BUTTON_CLASS}
-                    onClick={e => this.toggleFilesExpanded(e, i)}
-                  >
-                    {result.isExpanded ? (
-                      <caretUpIcon.react tag="span" />
-                    ) : (
-                      <caretDownIcon.react tag="span" />
-                    )}
-                  </button>
-                </li>
+              <li
+                className={`jp-PullRequestBrowserItemListItem${
+                  result.isExpanded ? ' jp-mod-expanded' : ''
+                }`}
+                key={result.internalId}
+              >
+                <button
+                  tabIndex={0}
+                  {...MINIMAL_BUTTON}
+                  onClick={e => this.toggleFilesExpanded(e, i)}
+                >
+                  {result.isExpanded ? (
+                    <caretDownIcon.react tag="span" />
+                  ) : (
+                    <caretRightIcon.react tag="span" />
+                  )}
+                </button>
+                <a tabIndex={0} onClick={() => this.props.showTab(result)}>
+                  {result.title}
+                </a>
+                <button
+                  tabIndex={0}
+                  onClick={e => this.openLink(e, result.link)}
+                  {...DANGER_BUTTON}
+                >
+                  <launcherIcon.react elementSize="small" tag="span" />
+                </button>
                 {result.isExpanded && (
                   <ul className="jp-PullRequestBrowserItemFileList">
                     {result.files != null &&
                       result.files.map((file, k) => (
-                        <li key={k} onClick={e => this.showFileTab(e, file)}>
-                          <PullRequestBrowserFileItem file={file} />
-                        </li>
+                        <PullRequestBrowserFileItem
+                          file={file}
+                          key={k}
+                          onClick={e => this.showFileTab(e, file)}
+                        />
                       ))}
                   </ul>
                 )}
-              </div>
+              </li>
             ))}
           </ul>
         )}

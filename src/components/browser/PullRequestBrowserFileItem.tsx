@@ -6,6 +6,7 @@ export interface IPullRequestBrowserFileItemState {}
 
 export interface IPullRequestBrowserFileItemProps {
   file: PullRequestFileModel;
+  onClick: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
 export class PullRequestBrowserFileItem extends React.Component<
@@ -19,31 +20,34 @@ export class PullRequestBrowserFileItem extends React.Component<
 
   render(): JSX.Element {
     return (
-      <div
+      <li
         className="jp-PullRequestBrowserFileItem"
         title={this.props.file.name}
       >
         <span className="jp-PullRequestBrowserFileItemChanged">
           {this.props.file.status}
         </span>
+        <div className="jp-PullRequestBrowserFileItemDiff">
+          <label>{this.props.file.additions}</label>
+          <icons.prInsertionIcon.react elementSize="small" tag="span" />
+        </div>
+        <div className="jp-PullRequestBrowserFileItemDiff">
+          <label>{this.props.file.deletions}</label>
+          <icons.prDeletionIcon.react elementSize="small" tag="span" />
+        </div>
         <span
           className={
             'jp-Icon jp-Icon-16 jp-PullRequestBrowserFileItemIcon ' +
             this.getExtensionIcon(this.props.file.extension)
           }
         ></span>
-        <span className="jp-PullRequestBrowserFileItemName">
+        <a
+          className="jp-PullRequestBrowserFileItemName"
+          onClick={this.props.onClick}
+        >
           {this.extractFilename(this.props.file.name)}
-        </span>
-        <div className="jp-PullRequestBrowserFileItemDiff">
-          <label>{this.props.file.additions}</label>
-          <icons.prInsertionIcon.react tag="span" elementSize="small" />
-        </div>
-        <div className="jp-PullRequestBrowserFileItemDiff">
-          <label>{this.props.file.deletions}</label>
-          <icons.prDeletionIcon.react tag="span" elementSize="small" />
-        </div>
-      </div>
+        </a>
+      </li>
     );
   }
 

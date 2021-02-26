@@ -5,8 +5,16 @@ import prInsertionSvgstr from '../style/pullrequest-insertion.svg';
 import prDeletionSvgstr from '../style/pullrequest-deletion.svg';
 import prPlusSvgstr from '../style/pullrequest-plus.svg';
 
-export const BUTTON_CLASS = {
-  className: 'bp3-button bp3-minimal minimal jp-Button'
+export const A_BUTTON = {
+  className: 'bp3-button jp-Button'
+};
+
+export const MINIMAL_BUTTON = {
+  className: `${A_BUTTON.className} bp3-minimal minimal`
+};
+
+export const DANGER_BUTTON = {
+  className: `${MINIMAL_BUTTON.className} jp-PullRequestDangerHover`
 };
 
 export const prIcon = new LabIcon({

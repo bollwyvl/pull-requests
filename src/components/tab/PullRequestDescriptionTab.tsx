@@ -1,8 +1,10 @@
 import { IThemeManager, Spinner } from '@jupyterlab/apputils';
 import * as React from 'react';
+
 import { RefObject } from 'react';
 import { PullRequestModel } from '../../models';
 import { launcherIcon } from '@jupyterlab/ui-components';
+import { renderMarkdown, RenderedMarkdown } from '@jupyterlab/rendermime';
 
 export interface IPullRequestDescriptionTabState {
   pr: PullRequestModel;
@@ -13,6 +15,7 @@ export interface IPullRequestDescriptionTabState {
 export interface IPullRequestDescriptionTabProps {
   pr: PullRequestModel;
   themeManager: IThemeManager;
+  markdown: RenderedMarkdown | null;
 }
 
 export class PullRequestDescriptionTab extends React.Component<
@@ -20,6 +23,7 @@ export class PullRequestDescriptionTab extends React.Component<
   IPullRequestDescriptionTabState
 > {
   private spinnerContainer: RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
+  private prBody: RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
   constructor(props: IPullRequestDescriptionTabProps) {
     super(props);
@@ -31,9 +35,25 @@ export class PullRequestDescriptionTab extends React.Component<
     this.setState({ isLoading: false });
   }
 
+  async componentDidUpdate(): Promise<void> {
+    if (this.props.markdown != null && this.prBody.current != null) {
+      const { markdown } = this.props;
+      await renderMarkdown({
+        host: this.prBody.current,
+        source: this.props.pr.body,
+        trusted: false,
+        sanitizer: markdown.sanitizer,
+        latexTypesetter: markdown.latexTypesetter,
+        resolver: markdown.resolver,
+        linkHandler: markdown.linkHandler,
+        shouldTypeset: true
+      });
+    }
+  }
+
   render(): JSX.Element {
     return (
-      <div className="jp-PullRequestTab">
+      <div className="jp-PullRequestTab jp-RenderedHTMLCommon jp-RenderedMarkdown">
         {!this.state.isLoading ? (
           this.state.error == null && this.state.pr != null ? (
             <div className="jp-PullRequestDescriptionTab">
@@ -49,7 +69,7 @@ export class PullRequestDescriptionTab extends React.Component<
                   <label>View Details</label>
                 </button>
               </header>
-              <p>{this.state.pr.body}</p>
+              <div ref={this.prBody}>{this.state.pr.body}</div>
             </div>
           ) : (
             <blockquote className="jp-PullRequestTabError">
